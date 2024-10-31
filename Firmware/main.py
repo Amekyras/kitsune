@@ -1,6 +1,7 @@
 import micropython
 import utime
 from machine import Pin, PWM
+#import asyncio
 
 # button pins
 
@@ -11,45 +12,50 @@ class box:
         pass
 
 
-buzzer = PWM(Pin(13))
+buzzer = PWM(Pin(13), freq=2500, duty_u16=0)
+
 
 def buzz(speaker):
-    speaker.duty_u16(60000)
+    #speaker.duty_u16(50000)
+
+    speaker.duty_u16(50000)
     speaker.freq(900)
 
-    speaker.freq(600)
+    speaker.freq(300)
     utime.sleep_ms(125)
 
     speaker.duty_u16(0)
     utime.sleep_ms(25)
-    speaker.duty_u16(60000)
-
-    speaker.freq(750)
-    utime.sleep_ms(125)
-    
-    speaker.duty_u16(0)
-    utime.sleep_ms(25)
-    speaker.duty_u16(60000)
-    
-    speaker.freq(600)
-    utime.sleep_ms(125)
-    
-    speaker.duty_u16(0)
-    utime.sleep_ms(25)
-    speaker.duty_u16(60000)
+    speaker.duty_u16(50000)
 
     speaker.freq(750)
     utime.sleep_ms(125)
     
     speaker.duty_u16(0)
     utime.sleep_ms(25)
-    speaker.duty_u16(60000)
+    speaker.duty_u16(50000)
+    
+    speaker.freq(300)
+    utime.sleep_ms(125)
+    
+    speaker.duty_u16(0)
+    utime.sleep_ms(25)
+    speaker.duty_u16(50000)
 
-    speaker.freq(600)
+    speaker.freq(750)
+    utime.sleep_ms(125)
+    
+    speaker.duty_u16(0)
+    utime.sleep_ms(25)
+    speaker.duty_u16(50000)
+
+    speaker.freq(300)
     utime.sleep_ms(125)
 
     speaker.duty_u16(0)
     return()
+
+
 
 
 

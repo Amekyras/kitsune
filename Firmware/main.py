@@ -59,7 +59,7 @@ def buzz(speaker):
 
 
 
-status_led = Pin("gpio25", Pin.OUT)
+status_led = Pin(25, Pin.OUT)
 control = box(14, 15)
 
 button_pins = [2, 4, 6, 8, 16, 18, 20, 26]
@@ -70,8 +70,14 @@ boxes = []
 for i in range(0, len(button_pins)):
     boxes.append(box(button_pin=button_pins[i], led_pin=led_pins[i]))
 
-lock = False
+lock = True
 pulse = 0
+
+while True:
+    #setup check
+    if control.button.value() == 1:
+        lock = False
+        break
 
 while True:
     if not lock:

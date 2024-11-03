@@ -59,7 +59,7 @@ def buzz(speaker):
 
 
 
-status_led = Pin("LED", Pin.OUT)
+status_led = Pin("gpio25", Pin.OUT)
 control = box(14, 15)
 
 button_pins = [2, 4, 6, 8, 16, 18, 20, 26]

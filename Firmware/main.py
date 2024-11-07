@@ -6,9 +6,17 @@ from machine import Pin, PWM
 # button pins
 
 class box:
-    def __init__(self, button_pin, led_pin):
-        self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
-        self.led = Pin(led_pin, Pin.OUT)
+    def __init__(self, button_pin, led_pin=None, id="", pull="down"):
+        if pull == "up":
+            self.button = Pin(button_pin, Pin.IN, Pin.PULL_UP)
+        else:
+            self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
+
+        if led_pin != None:
+            self.led = Pin(led_pin, Pin.OUT)
+        else:
+            self.led = None
+        self.id = id
         pass
 
 
@@ -55,38 +63,75 @@ def buzz(speaker):
     speaker.duty_u16(0)
     return()
 
+#jump1 = Pin(12, Pin.IN, Pin.PULL_UP)
+#jump2 = Pin(11, Pin.IN, Pin.PULL_UP)
+#jump3 = Pin(10, Pin.IN, Pin.PULL_UP)
 
-
+jumps= []
+jumps.append(box(button_pin=12, id="jump1", pull="up"))
+jumps.append(box(button_pin=11, id="jump2", pull="up"))
+jumps.append(box(button_pin=10, id="jump3", pull="up"))
 
 
 status_led = Pin(25, Pin.OUT)
-control = box(14, 15)
+control = box(14, led_pin=15, id="Control")
 
 button_pins = [2, 4, 6, 8, 16, 18, 20, 26]
 led_pins = [3, 5, 7, 9, 17, 19, 21, 27]
+ids = ["A1", "A2", "A3", "A4", "B4", "B3", "B2", "B1"]
 
 boxes = []
 
 for i in range(0, len(button_pins)):
-    boxes.append(box(button_pin=button_pins[i], led_pin=led_pins[i]))
+    boxes.append(box(button_pin=button_pins[i], led_pin=led_pins[i], id=ids[i]))
 
 lock = True
 pulse = 0
 
+status_led.off()
+control.led.off() # type: ignore
+
 while True:
     #setup check
-    if control.button.value() == 1:
+
+    if not jumps[0]:#not jumps[0].button.value():
+        
+        #buzzer test loop
+        testboxes = []
+        testboxes.extend(boxes)
+        testboxes.extend(jumps)
+        testboxes.append(control)
+        while True:
+            low = []
+            high = []
+            for i in testboxes:
+                if i.button.value() == 1:
+                    high.append(i.id)
+                    if i.led is not None:
+                        i.led.on()
+                else:
+                    low.append(i.id)
+                    if i.led is not None:
+                        i.led.off()
+            print(f"High = {high}, Low = {low}", end="\r")
+            #print("cycle")
+
+            
+    
+    elif control.button.value() == 1:
         lock = False
         break
 
+#main loop
+
 while True:
     if not lock:
-        control.led.on()
+        control.led.on() # type: ignore
         for i in boxes:
             if i.button.value() == 1:
                 lock = True
                 i.led.on()
-                control.led.off()
+                control.led.off() # type: ignore
                 buzz(speaker=buzzer)
                 break
         pulse +=1
@@ -105,7 +150,7 @@ while True:
             
             for i in boxes:
                 i.led.off()
-            control.led.on()
+            control.led.on() # type: ignore
 
         
     

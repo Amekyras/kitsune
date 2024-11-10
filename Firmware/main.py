@@ -1,6 +1,7 @@
 import micropython
 import utime
-from machine import Pin, PWM
+from machine import Pin, PWM, Timer
+from neopixel import NeoPixel
 #import asyncio
 
 # button pins
@@ -22,6 +23,11 @@ class box:
 
 buzzer = PWM(Pin(13), freq=2500, duty_u16=0)
 
+pixel_pin = Pin(23, Pin.OUT)
+
+pixel = NeoPixel(pixel_pin, 1)
+pixel.fill((0, 0, 0))
+pixel.write()
 
 def buzz(speaker):
     #speaker.duty_u16(50000)
@@ -63,6 +69,26 @@ def buzz(speaker):
     speaker.duty_u16(0)
     return()
 
+
+
+pixel_timer = Timer()
+
+
+def flash_pixel():
+    r, g, b = pixel[0] # type: ignore
+    if lock:
+        if r == 0:
+            pixel.fill((217, 121, 232))
+        else:
+            pixel.fill((0, 0, 0))
+
+    #print(pixel, lock)
+    pixel.write()
+    pass
+    #pixel_timer.init(mode=Timer.ONE_SHOT, period=1000, callback=flash_pixel(toggle))
+
+    
+
 #jump1 = Pin(12, Pin.IN, Pin.PULL_UP)
 #jump2 = Pin(11, Pin.IN, Pin.PULL_UP)
 #jump3 = Pin(10, Pin.IN, Pin.PULL_UP)
@@ -75,6 +101,9 @@ jumps.append(box(button_pin=10, id="jump3", pull="up"))
 
 status_led = Pin(25, Pin.OUT)
 control = box(14, led_pin=15, id="Control")
+
+
+
 
 button_pins = [2, 4, 6, 8, 16, 18, 20, 26]
 led_pins = [3, 5, 7, 9, 17, 19, 21, 27]
@@ -91,10 +120,12 @@ pulse = 0
 status_led.off()
 control.led.off() # type: ignore
 
+print("Entering setup loop")
+
 while True:
     #setup check
 
-    if not jumps[0]:#not jumps[0].button.value():
+    if not jumps[0].button.value():
         
         #buzzer test loop
         testboxes = []
@@ -123,6 +154,7 @@ while True:
         break
 
 #main loop
+print("Entering main loop")
 
 while True:
     if not lock:
@@ -132,6 +164,8 @@ while True:
                 lock = True
                 i.led.on()
                 control.led.off() # type: ignore
+                pixel.fill((255, 0, 0))
+                pixel.write()
                 buzz(speaker=buzzer)
                 break
         pulse +=1
@@ -151,6 +185,11 @@ while True:
             for i in boxes:
                 i.led.off()
             control.led.on() # type: ignore
+            pixel.fill((0, 0, 0))
+            pixel.write()
+
+
+
 
         
     

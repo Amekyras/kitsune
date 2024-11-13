@@ -30,6 +30,10 @@ pixel = NeoPixel(pixel_pin, 1)
 pixel.fill((0, 0, 0))
 pixel.write()
 
+global phase
+phase = ""
+
+
 def buzz(speaker):
     #speaker.duty_u16(50000)
 
@@ -91,7 +95,7 @@ def flash_pixel():
     #pixel_timer.init(mode=Timer.ONE_SHOT, period=1000, callback=flash_pixel(toggle))
 
     
-def cycle_pixel(Timer):
+def cycle_pixel(Timer=None):
     rval = random.randint(0, 255)
     gval = random.randint(0, 255)
     bval = random.randint(0, 255)
@@ -100,6 +104,21 @@ def cycle_pixel(Timer):
     print(pixel.__getitem__(0)) # type: ignore
     pixel.write()
     return()
+
+
+def handle_timer(Timer):
+    if phase == "setup":
+        cycle_pixel()
+    elif phase == "listen":
+        status_toggle()
+    elif lock:
+        pass
+        
+
+
+    
+
+
 
 
 #jump1 = Pin(12, Pin.IN, Pin.PULL_UP)
@@ -115,7 +134,7 @@ jumps.append(box(button_pin=10, id="jump3", pull="up"))
 status_led = Pin(25, Pin.OUT)
 control = box(14, led_pin=15, id="Control")
 
-def status_toggle(Timer):
+def status_toggle(Timer=None):
     status_led.toggle()
 
 
@@ -135,7 +154,9 @@ status_led.off()
 control.led.off() # type: ignore
 
 print("Entering setup loop")
-setup_timer.init(period=1000, callback=cycle_pixel)
+
+phase = "setup"
+setup_timer.init(period=3000, callback=handle_timer)
 
 while True:
     #setup check
@@ -149,7 +170,7 @@ while True:
         testboxes.extend(boxes)
         testboxes.extend(jumps)
         testboxes.append(control)
-        setup_timer.deinit()
+        #setup_timer.deinit()
         pixel.fill((0, 255, 0))
         pixel.write()
 
@@ -179,16 +200,20 @@ while True:
     
     elif control.button.value() == 1:
         lock = False
-        setup_timer.deinit()
+        #setup_timer.deinit()
         break
 
 #main loop
 print("Entering main loop")
-listen_timer.init(mode=Timer.PERIODIC, period=2000, callback=status_toggle)
-setup_timer.deinit()
+#listen_timer.init(mode=Timer.PERIODIC, period=2000, callback=status_toggle)
+#setup_timer.deinit()
+pixel.fill((0, 0, 0))
+pixel.write()
+
 while True:
     if not lock:
         control.led.on() # type: ignore
+        phase = "listen"
         for i in boxes:
             if i.button.value() == 1:
                 lock = True
@@ -212,7 +237,7 @@ while True:
             print("Resetting")
             lock = False
             pulse = 0
-            listen_timer.init(mode=Timer.PERIODIC, period=2000, callback=status_toggle)
+            #listen_timer.init(mode=Timer.PERIODIC, period=2000, callback=status_toggle)
             
             for i in boxes:
                 i.led.off()

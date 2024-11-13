@@ -2,6 +2,7 @@ import micropython
 import utime
 from machine import Pin, PWM, Timer
 from neopixel import NeoPixel
+import random
 #import asyncio
 
 # button pins
@@ -72,6 +73,8 @@ def buzz(speaker):
 
 
 pixel_timer = Timer()
+setup_timer = Timer()
+listen_timer = Timer()
 
 
 def flash_pixel():
@@ -88,6 +91,16 @@ def flash_pixel():
     #pixel_timer.init(mode=Timer.ONE_SHOT, period=1000, callback=flash_pixel(toggle))
 
     
+def cycle_pixel(Timer):
+    rval = random.randint(0, 255)
+    gval = random.randint(0, 255)
+    bval = random.randint(0, 255)
+
+    pixel.fill((rval, gval, bval))
+    print(pixel.__getitem__(0)) # type: ignore
+    pixel.write()
+    return()
+
 
 #jump1 = Pin(12, Pin.IN, Pin.PULL_UP)
 #jump2 = Pin(11, Pin.IN, Pin.PULL_UP)
@@ -102,7 +115,8 @@ jumps.append(box(button_pin=10, id="jump3", pull="up"))
 status_led = Pin(25, Pin.OUT)
 control = box(14, led_pin=15, id="Control")
 
-
+def status_toggle(Timer):
+    status_led.toggle()
 
 
 button_pins = [2, 4, 6, 8, 16, 18, 20, 26]
@@ -121,9 +135,12 @@ status_led.off()
 control.led.off() # type: ignore
 
 print("Entering setup loop")
+setup_timer.init(period=1000, callback=cycle_pixel)
 
 while True:
     #setup check
+
+
 
     if not jumps[0].button.value():
         
@@ -132,36 +149,50 @@ while True:
         testboxes.extend(boxes)
         testboxes.extend(jumps)
         testboxes.append(control)
+        setup_timer.deinit()
+        pixel.fill((0, 255, 0))
+        pixel.write()
+
         while True:
             low = []
             high = []
             for i in testboxes:
                 if i.button.value() == 1:
                     high.append(i.id)
+                    pixel.fill((0, 0, 255))
+                    pixel.write()
                     if i.led is not None:
                         i.led.on()
+                        
                 else:
                     low.append(i.id)
+                    pixel.fill((0, 255, 0))
+                    pixel.write()
                     if i.led is not None:
                         i.led.off()
             print(f"High = {high}, Low = {low}", end="\r")
+            if "Control" in high:
+                buzz(buzzer)
             #print("cycle")
 
             
     
     elif control.button.value() == 1:
         lock = False
+        setup_timer.deinit()
         break
 
 #main loop
 print("Entering main loop")
-
+listen_timer.init(mode=Timer.PERIODIC, period=2000, callback=status_toggle)
+setup_timer.deinit()
 while True:
     if not lock:
         control.led.on() # type: ignore
         for i in boxes:
             if i.button.value() == 1:
                 lock = True
+                status_led.off()
                 i.led.on()
                 control.led.off() # type: ignore
                 pixel.fill((255, 0, 0))
@@ -173,7 +204,7 @@ while True:
         if pulse % 10000 == 0:
             for x in boxes:
                 print(x.button.value())
-            status_led.toggle()
+            #status_led.toggle()
             print (pulse)
 
     else:
@@ -181,6 +212,7 @@ while True:
             print("Resetting")
             lock = False
             pulse = 0
+            listen_timer.init(mode=Timer.PERIODIC, period=2000, callback=status_toggle)
             
             for i in boxes:
                 i.led.off()

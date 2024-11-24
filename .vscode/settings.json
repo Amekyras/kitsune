@@ -5,7 +5,7 @@
         "reportMissingModuleSource": "none"
     },
     "python.terminal.activateEnvironment": false,
-    "micropico.syncFolder": "",
+    "micropico.syncFolder": "Firmware",
     "micropico.openOnStart": true,
     "python.analysis.typeshedPaths": [
         "~/.micropico-stubs/included"

@@ -8,6 +8,7 @@ I've made this project open-source under a modified Commons Clause. This means t
 
 Yes, I know that the code and photography are messy. I'm a psych student, not an engineer.
 
+Many thanks to https://github.com/james1236/buzzer_music for enabling me to include an easter egg or two :)
 
 ![PXL_20241107_222718396](https://github.com/user-attachments/assets/b72bb5ca-9fba-4505-bb74-53a440e6cba6)
 ![PXL_20241111_130336351 MP](https://github.com/user-attachments/assets/2092b343-8ded-4a94-a322-e174ae3cba6e)

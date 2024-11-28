@@ -167,6 +167,7 @@ class music:
         splitSong = self.song.split(";")
         for note in splitSong:
             snote = note.split(" ")
+            print(snote)
             testEnd = round(float(snote[0])) + ceil(float(snote[2]))
             if (testEnd > self.end):
                 self.end = testEnd

@@ -89,13 +89,14 @@ def flash_pixel():
     #pixel_timer.init(mode=Timer.ONE_SHOT, period=1000, callback=flash_pixel(toggle))
 
     
-song = "robotsftw.txt"
+song = "obstacles.txt"
 
 
 def egg(songfile):
     with open(songfile, "r", encoding="utf-8") as songf:
         song = songf.read()
     song.replace('\"', " ")
+    song.replace('\'', " ")
     print(song)
     track = music(song, pin = Pin(13))
     while True:

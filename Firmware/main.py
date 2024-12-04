@@ -22,6 +22,12 @@ class box:
         pass
 
 
+    def handle_buzz(c):
+
+        pass
+
+
+
 buzzer = PWM(Pin(13), freq=2500, duty_u16=0)
 
 pixel_pin = Pin(23, Pin.OUT)

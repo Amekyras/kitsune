@@ -95,7 +95,7 @@ def flash_pixel():
     #pixel_timer.init(mode=Timer.ONE_SHOT, period=1000, callback=flash_pixel(toggle))
 
     
-song = "obstacles.txt"
+song = "cara.txt"
 
 
 def egg(songfile):

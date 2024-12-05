@@ -1,34 +1,27 @@
-#import micropython
 import utime
 from machine import Pin, PWM, Timer
 from neopixel import NeoPixel
-#import asyncio
 from buzzer_music import music
-# button pins
-import json
+
 
 class box:
-    def __init__(self, button_pin, led_pin=None, id="", pull="down"):
+    """All inputs use this class, pass led_pin ID """
+    def __init__(self, button_pin, led_pin=None, id="", pull="down", irq=False):
         if pull == "up":
             self.button = Pin(button_pin, Pin.IN, Pin.PULL_UP)
         else:
             self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
 
-        if led_pin != None:
+        if irq:
+            pass
+
+        if led_pin is not None:
             self.led = Pin(led_pin, Pin.OUT)
         else:
             self.led = None
         self.id = id
         pass
 
-
-buzzer = PWM(Pin(13), freq=2500, duty_u16=0)
-
-pixel_pin = Pin(23, Pin.OUT)
-
-pixel = NeoPixel(pixel_pin, 1)
-pixel.fill((0, 0, 0))
-pixel.write()
 
 def buzz(speaker):
     #speaker.duty_u16(50000)
@@ -71,10 +64,6 @@ def buzz(speaker):
     return()
 
 
-
-pixel_timer = Timer()
-
-
 def flash_pixel():
     r, g, b = pixel[0] # type: ignore
     if lock:
@@ -88,8 +77,24 @@ def flash_pixel():
     pass
     #pixel_timer.init(mode=Timer.ONE_SHOT, period=1000, callback=flash_pixel(toggle))
 
-    
-song = "obstacles.txt"
+
+
+buzzer = PWM(Pin(13), freq=2500, duty_u16=0)
+
+pixel_pin = Pin(23, Pin.OUT)
+
+pixel = NeoPixel(pixel_pin, 1)
+pixel.fill((0, 0, 0))
+pixel.write()
+
+
+
+
+
+
+
+### EASTER EGG DETECTION/EXECUTION ###
+song = "cara.txt"
 
 
 def egg(songfile):
@@ -112,7 +117,8 @@ if eggpin.value():
 
 egghigh.init()
 
-#egg
+### END EGG ###
+
 jumps= []
 jumps.append(box(button_pin=12, id="jump1", pull="up"))
 jumps.append(box(button_pin=11, id="jump2", pull="up"))
@@ -125,8 +131,8 @@ control = box(14, led_pin=15, id="Control")
 
 
 
-button_pins = [2, 4, 6, 8, 16, 18, 20, 26]
-led_pins = [3, 5, 7, 9, 17, 19, 21, 27]
+button_pins = [2, 4, 6, 8, 16, 18, 20, 26] #v0.1 pins
+led_pins = [3, 5, 7, 9, 17, 19, 21, 27] #v0.1 pins
 ids = ["A1", "A2", "A3", "A4", "B4", "B3", "B2", "B1"]
 
 boxes = []
@@ -141,11 +147,7 @@ status_led.off()
 control.led.off() # type: ignore
 
 
-
-print("Entering setup loop")
-
 jingletrack = "0 G5 1 15 0.5039370059967041;1 F#5 1 15 0.5039370059967041;3 E5 3 15 0.5039370059967041;6 F#5 2 15 0.5039370059967041"
-
 jingle = music(jingletrack, pin=Pin(13), looping=False)
 
 while True:
@@ -153,6 +155,9 @@ while True:
     utime.sleep(0.04)
     if jingle.stopped:
         break
+
+
+print("Entering setup loop")
 
 while True:
     #setup check
@@ -201,7 +206,6 @@ while True:
                 buzz(speaker=buzzer)
                 break
         pulse +=1
-        #gc.collect()
         if pulse % 10000 == 0:
             for x in boxes:
                 print(x.button.value())

@@ -5,7 +5,7 @@ from buzzer_music import music
 
 
 class box:
-    """All inputs use this class, pass led_pin ID """
+    """All inputs use this class, pass led_pin ID to add output"""
     def __init__(self, button_pin, led_pin=None, id="", pull="down", irq=False):
         if pull == "up":
             self.button = Pin(button_pin, Pin.IN, Pin.PULL_UP)

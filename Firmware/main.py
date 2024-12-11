@@ -1,7 +1,30 @@
 import utime
-from machine import Pin, PWM, Timer
+import micropython
+from machine import *
 from neopixel import NeoPixel
 from buzzer_music import music
+import rp2
+
+
+
+
+# starting variable values
+lock = True
+pulse = 0
+flag = False
+active = None
+
+def handle_buzz(box):
+    #global lock
+    global active
+    global flag
+
+    if not flag:
+        #lock = True
+        flag = True
+        active = box
+
+        print(f"Successful buzz from {box.id}")
 
 
 class box:
@@ -13,19 +36,23 @@ class box:
             self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
 
         if irq:
-            pass
+            self.button.irq(handler=self.handle_press)
 
         if led_pin is not None:
             self.led = Pin(led_pin, Pin.OUT)
         else:
             self.led = None
+        
         self.id = id
         pass
 
 
-    def handle_buzz(c):
-
-        pass
+    def handle_press(self, c):
+        state = disable_irq()
+        if not lock:
+            micropython.schedule(handle_buzz, self)
+            print("buzz")
+        enable_irq(state)
 
 
 
@@ -152,10 +179,9 @@ ids = ["A1", "A2", "A3", "A4", "B4", "B3", "B2", "B1"]
 boxes = []
 
 for i in range(0, len(button_pins)):
-    boxes.append(box(button_pin=button_pins[i], led_pin=led_pins[i], id=ids[i]))
+    boxes.append(box(button_pin=button_pins[i], led_pin=led_pins[i], id=ids[i], irq=True))
 
-lock = True
-pulse = 0
+
 
 status_led.off()
 control.led.off() # type: ignore
@@ -168,9 +194,10 @@ while True:
     jingle.tick()
     utime.sleep(0.04)
     if jingle.stopped:
+        buzzer.duty_u16(0)
         break
 
-
+buzzer.duty_u16(0)
 print("Entering setup loop")
 
 while True:
@@ -210,15 +237,14 @@ print("Entering main loop")
 while True:
     if not lock:
         control.led.on() # type: ignore
-        for i in boxes:
-            if i.button.value() == 1:
-                lock = True
-                i.led.on()
-                control.led.off() # type: ignore
-                pixel.fill((255, 0, 0))
-                pixel.write()
-                buzz(speaker=buzzer)
-                break
+        if flag:
+            lock = True
+            flag = False
+            control.led.off() # type: ignore
+            active.led.on() # type: ignore
+            pixel.fill((255, 0, 0))
+            pixel.write()
+            buzz(speaker=buzzer)
         pulse +=1
         if pulse % 10000 == 0:
             for x in boxes:

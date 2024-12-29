@@ -3,6 +3,7 @@ import micropython
 from machine import *
 from neopixel import NeoPixel
 from buzzer_music import music
+from neotimer import Neotimer
 import rp2
 
 
@@ -66,42 +67,42 @@ pixel.write()
 
 def buzz(speaker):
     #speaker.duty_u16(50000)
+    if not switches[1].button.value():
+        speaker.duty_u16(50000)
+        speaker.freq(900)
 
-    speaker.duty_u16(50000)
-    speaker.freq(900)
+        speaker.freq(300)
+        utime.sleep_ms(125)
 
-    speaker.freq(300)
-    utime.sleep_ms(125)
+        speaker.duty_u16(0)
+        utime.sleep_ms(25)
+        speaker.duty_u16(50000)
 
-    speaker.duty_u16(0)
-    utime.sleep_ms(25)
-    speaker.duty_u16(50000)
+        speaker.freq(750)
+        utime.sleep_ms(125)
+        
+        speaker.duty_u16(0)
+        utime.sleep_ms(25)
+        speaker.duty_u16(50000)
+        
+        speaker.freq(300)
+        utime.sleep_ms(125)
+        
+        speaker.duty_u16(0)
+        utime.sleep_ms(25)
+        speaker.duty_u16(50000)
 
-    speaker.freq(750)
-    utime.sleep_ms(125)
-    
-    speaker.duty_u16(0)
-    utime.sleep_ms(25)
-    speaker.duty_u16(50000)
-    
-    speaker.freq(300)
-    utime.sleep_ms(125)
-    
-    speaker.duty_u16(0)
-    utime.sleep_ms(25)
-    speaker.duty_u16(50000)
+        speaker.freq(750)
+        utime.sleep_ms(125)
+        
+        speaker.duty_u16(0)
+        utime.sleep_ms(25)
+        speaker.duty_u16(50000)
 
-    speaker.freq(750)
-    utime.sleep_ms(125)
-    
-    speaker.duty_u16(0)
-    utime.sleep_ms(25)
-    speaker.duty_u16(50000)
+        speaker.freq(300)
+        utime.sleep_ms(125)
 
-    speaker.freq(300)
-    utime.sleep_ms(125)
-
-    speaker.duty_u16(0)
+        speaker.duty_u16(0)
     return()
 
 
@@ -123,21 +124,44 @@ def flash_pixel():
 buzzer = PWM(Pin(13), freq=2500, duty_u16=0)
 
 pixel_pin = Pin(23, Pin.OUT)
-
 pixel = NeoPixel(pixel_pin, 1)
 pixel.fill((0, 0, 0))
 pixel.write()
 
+status_led = Pin(25, Pin.OUT)
+status_led.off()
+
+control = box(14, led_pin=15, id="Control")
+control.led.off() # type: ignore
 
 
 
+
+
+
+
+
+
+### SWITCHBOARD ###
+
+# 1 - DEBUG
+# 2 - MUTE
+# 3 - EGG
+# 4 - 
+# 5 - BRANCH
+# 6 - ACTIVATE MULTIBUZZER
+switches = []
+
+switch_pins = [28, 23, 22, 12, 11, 10] #v0.2 pins
+switch_ids = ["switch1", "switch2", "switch3", "switch4", "switch5", "switch6"]
+
+for i in range(0, len(switch_pins)):
+    switches.append(box(button_pin=switch_pins[i], id=switch_ids[i], pull="up"))
 
 
 
 ### EASTER EGG DETECTION/EXECUTION ###
 song = "cara.txt"
-
-
 def egg(songfile):
     with open(songfile, "r", encoding="utf-8") as songf:
         song = songf.read()
@@ -150,26 +174,9 @@ def egg(songfile):
         utime.sleep(0.04)
 
 
-egghigh = Pin(10, Pin.OUT, value=1)
-eggpin = Pin(11, Pin.IN, Pin.PULL_DOWN)
-
-if eggpin.value():
+if not switches[2].button.value():
     egg(song)
-
-egghigh.init()
-
 ### END EGG ###
-
-jumps= []
-jumps.append(box(button_pin=12, id="jump1", pull="up"))
-jumps.append(box(button_pin=11, id="jump2", pull="up"))
-jumps.append(box(button_pin=10, id="jump3", pull="up"))
-
-
-status_led = Pin(25, Pin.OUT)
-control = box(14, led_pin=15, id="Control")
-
-
 
 
 button_pins = [2, 4, 6, 8, 16, 18, 20, 26] #v0.1 pins
@@ -183,32 +190,30 @@ for i in range(0, len(button_pins)):
 
 
 
-status_led.off()
-control.led.off() # type: ignore
 
 
+#startup sound
 jingletrack = "0 G5 1 15 0.5039370059967041;1 F#5 1 15 0.5039370059967041;3 E5 3 15 0.5039370059967041;6 F#5 2 15 0.5039370059967041"
 jingle = music(jingletrack, pin=Pin(13), looping=False)
+if not switches[1].button.value():
+    while True:
+        jingle.tick()
+        utime.sleep(0.04)
+        if jingle.stopped:
+            buzzer.duty_u16(0)
+            break
+buzzer.duty_u16(0) #kill buzzer
 
-while True:
-    jingle.tick()
-    utime.sleep(0.04)
-    if jingle.stopped:
-        buzzer.duty_u16(0)
-        break
-
-buzzer.duty_u16(0)
 print("Entering setup loop")
-
-while True:
+while True: 
     #setup check
 
-    if not jumps[0].button.value():
+    if not switches[0].button.value():
         
         #buzzer test loop
         testboxes = []
         testboxes.extend(boxes)
-        testboxes.extend(jumps)
+        testboxes.extend(switches)
         testboxes.append(control)
         while True:
             low = []
@@ -231,9 +236,17 @@ while True:
         lock = False
         break
 
+# check for multibuzzer
+mb = False
+if not switches[5].button.value():
+    mb = True
+    if not switches[4].button.value():
+        role = "Branch"
+    else:
+        role = "Main"
+
 #main loop
 print("Entering main loop")
-
 while True:
     if not lock:
         control.led.on() # type: ignore
@@ -245,6 +258,7 @@ while True:
             pixel.fill((255, 0, 0))
             pixel.write()
             buzz(speaker=buzzer)
+            
         pulse +=1
         if pulse % 10000 == 0:
             for x in boxes:

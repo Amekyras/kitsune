@@ -10,6 +10,8 @@ status_pin = 25
 control_led = 15
 control_pin = 14
 pixel_pin = 23
+tx_pin = 0
+rx_pin = 1
 
 switch_pins = [28, 23, 22, 12, 11, 10] #v0.2 pins
 switch_ids = ["switch1", "switch2", "switch3", "switch4", "switch5", "switch6"]
@@ -63,11 +65,6 @@ class box:
             micropython.schedule(handle_buzz, self)
             print("buzz")
         enable_irq(state)
-
-
-
-buzzer = PWM(Pin(13), freq=2500, duty_u16=0)
-
 
 
 
@@ -144,7 +141,7 @@ def bundle_handler(mode):
 def reset_handler(mode):
     print("Resetting")
     global lock
-    lock = False
+    
     status_timer.init(period=1000, callback=status_toggle)
 
     
@@ -154,8 +151,23 @@ def reset_handler(mode):
     pixel.fill((0, 0, 0))
     pixel.write()
 
+    if mode == 'main':
+        while uart.any() > 0:
+            uart.read()
+        uart.write("r")
+        uart.flush()
 
-#initialise hardware
+        while True:
+            if "a" in str(uart.read()):
+                break
+    if mode == 'branch':
+        uart.write("a")
+        uart.flush()
+
+    lock = False
+
+
+#setup hardware
 buzzer = PWM(Pin(buzzer_pin), freq=2500, duty_u16=0)
 
 status_led = Pin(status_pin, Pin.OUT)
@@ -172,6 +184,7 @@ control.led.off() # type: ignore
 boxes = []
 for i in range(0, len(button_pins)):
     boxes.append(box(button_pin=button_pins[i], led_pin=led_pins[i], id=ids[i], irq=True))
+
 
 
 ### SWITCHBOARD ###
@@ -268,25 +281,73 @@ mb = False
 if not switches[5].button.value():
     mb = True
     if not switches[4].button.value():
-        role = "Branch"
+        role = "branch"
+        print("Branch mode")
     else:
-        role = "Main"
+        role = "main"
+        print("Main mode")
+    uart = UART(0) 
+    uart.init(tx=tx_pin, rx=rx_pin)
+
 else:
     role = None
+    print("Standalone mode")
 
 #main loop
 status_timer.init(period=1000, callback=status_toggle)
+
 print("Entering main loop")
+def game_loop(role):
+    global lock
+    global flag
+
+    match role:
+        case None:
+            while True:
+                if not lock:
+                    control.led.on() # type: ignore
+                    if flag:
+                        bundle_handler(role)
+
+                elif control.button.value() == 1:
+                    reset_handler(role)
+
+
+        case "main":
+            while True:
+                if not lock:
+                    if uart.any() > 0:
+                        print("Buzz from branch")
+                        lock = True
+                        uart.write("y")
+                    control.led.on() # type: ignore
+                    if flag:
+                        bundle_handler(role)
+
+                elif control.button.value() == 1:
+                    reset_handler(role)
+
+        case "branch":
+            while True:
+                if not lock:
+                    control.led.on() # type: ignore
+                    if uart.any() > 0:
+                        lock = True
+                        #uart.write("b")
+                    elif flag:
+                        uart.write("b")
+                        while True:
+                            if "a" in str(uart.read()):
+                                bundle_handler(role)
+                            elif "r" in str(uart.read()):
+                                reset_handler(role)
+
+                elif "r" in str(uart.read()):
+                    reset_handler(role)
+
+
 while True:
-    if not lock:
-        control.led.on() # type: ignore
-        if flag:
-            bundle_handler(role)
-
-    else:
-        if control.button.value() == 1:
-            reset_handler(role)
-
+    game_loop(role)
 
 
 

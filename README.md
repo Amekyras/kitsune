@@ -2,7 +2,22 @@ _**Kitsune - a Nine-Tailed Buzzer System**_
 
 Kitsune is a lockout buzzer system designed by myself (Aisling Skeet). I started this project because lockout buzzer systems are ridiculously expensive for a relatively simple piece of hardware, and college quizbowl teams tend not to be absolutely flush with cash. The most common buzzer set in the UK retails for almost twice the price of a Kitsune set, and doesn't even come in fun colours! This throws a massive barrier in the way of new quiz societies. The other reason for the project is that I'd like to make a bit of extra cash, both for myself and for Durham Uni Quiz Society. Win-win!
 
-If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox.com. I sell them fully assembled for £150 plus shipping in any filament colour I can get my hands on, with all necessary parts included save a USB-C cable (your phone charger probably works fine). I can add customisations (e.g. your society logo) for a small fee.
+If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox.com or message amekyras on Discord. I sell them fully assembled in any filament colour I can get my hands on, with all necessary parts included save a USB-C cable (your phone charger probably works fine). I can add customisations (e.g. your society logo) for a small fee.
+
+
+
+**Prices:**
+
+Kitsune v0.1 - £125 (while stocks last)
+
+Kitsune v0.2 - £150, set of two £275
+
+Free collection at certain UK tournaments or domestic shipping £5
+
+**New Societies Scheme**
+
+If you've founded a new  quizbowl society and don't yet have a buzzer set, and your society is unable to pay full price for a Kitsune set, please let me know and we might be able to work out a discount or a free set. More quizbowl societies = a bigger UK quizbowl scene!
+
 
 I've made this project open-source under a modified Commons Clause. This means that you can make your own Kitsune set, but not sell it. I'm not a lawyer, so in case I've done anything wrong, in plain English - _please don't sell Kitsunes_.
 

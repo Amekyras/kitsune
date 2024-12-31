@@ -324,6 +324,7 @@ if role == 'main':
             if "buzz" in check_uart():
                 print("Buzz from branch")
                 lock = True
+                status_timer.deinit()
                 uart.write("ack")
             
             if flag:
@@ -343,8 +344,10 @@ elif role == 'branch':
                         bundle_handler(role)
                     elif "lock" in check_uart():
                         lock = True
+                        status_timer.deinit()
             elif "lock" in check_uart():
                 lock = True
+                status_timer.deinit()
 
         elif "reset" in check_uart():
             print("Resetting branch")

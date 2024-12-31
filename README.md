@@ -4,6 +4,26 @@ Kitsune is a lockout buzzer system designed by myself (Aisling Skeet). I started
 
 If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox.com or message amekyras on Discord. I sell them fully assembled in any filament colour I can get my hands on, with all necessary parts included save a USB-C cable (your phone charger probably works fine). I can add customisations (e.g. your society logo) for a small fee.
 
+## Versions
+- Kitsune v0.1
+  - One central box with speaker and USB connection
+  - Nine 'tails' - smaller buzzer boxes connected via 3.5mm audio cables
+  - One tail is used as the moderator's control box to initialise and reset the system
+  - Complete lockout controlled by Raspberry Pi Pico
+  - Debug jumper to test all ports and boxes
+   
+- Kitsune v0.2
+  - All of the above, plus:
+  - Additional onboard LEDS to provide a secondary indication mechanism
+  - New JST-XH port to allow external battery usage (tested with 1x9V, should work with multiple AAs in series)
+  - New JST-XH port breaking out UART pins, will be used for connecting two boards together for 16-player mode at a later date
+  - Debug jumper replaced with 6-way DIP switch, controlling (left to right)
+    - Debug mode
+    - Speaker mute
+    - Speaker test
+    - Automatic reset
+    - Multibuzzer branch mode (currently inactive)
+    - Multibuzzer main mode (currently inactive)
 
 
 ## Prices:

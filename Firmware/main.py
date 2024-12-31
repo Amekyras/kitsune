@@ -127,6 +127,7 @@ def check_uart():
     if uart.any():
         data = uart.read()
         if data:
+            print(data)
             return str(data)
         else:
             return ""

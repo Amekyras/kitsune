@@ -34,9 +34,11 @@ Kitsune v0.2 - £150, set of two £275
 
 Free collection at certain UK tournaments or domestic shipping £5
 
+USA/other international pricing for a v0.2 set may vary, but is currently $210 including standard international shipping, not including any import taxes you may need to pay if they apply.
+
 ### New Societies Scheme
 
-If you've founded a new  quizbowl society and don't yet have a buzzer set, and your society is unable to pay full price for a Kitsune set, please let me know and we might be able to work out a discount or a free set. More quizbowl societies = a bigger UK quizbowl scene!
+If you've founded a new quizbowl society and don't yet have a buzzer set, and your society is unable to pay full price for a Kitsune set, please let me know and we might be able to work out a discount or a free set. More quizbowl societies = a bigger UK quizbowl scene!
 
 
 ## Credits and disclaimers

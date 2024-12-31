@@ -22,7 +22,6 @@ ids = ["A1", "A2", "A3", "A4", "B4", "B3", "B2", "B1"]
 
 # starting variable values
 lock = True
-#pulse = 0
 flag = False
 active = None
 
@@ -151,32 +150,37 @@ def bundle_handler(mode):
     pixel.write()
     buzz(speaker=buzzer)
 
+    if autoreset:
+        reset_timer.init(mode=Timer.ONE_SHOT, period=10000, callback=autoresetter)
+
 
 def reset_handler(mode):
     print("Resetting")
+    reset_timer.deinit()
     global lock
-    
-    status_timer.init(period=1000, callback=status_toggle)
 
     for i in boxes:
         i.led.off()
     control.led.on() # type: ignore
+
     pixel.fill((0, 0, 0))
     pixel.write()
 
     if mode == 'main':
         uart.write("reset")
-        while True:
-            if "ack" in check_uart():
-                break
+        #while True:
+        #    if "ack" in check_uart():
+        #        break
 
     if mode == 'branch':
         uart.write("ack\n")
 
-    
-
+    status_timer.init(period=1000, callback=status_toggle)
     lock = False
 
+
+def autoresetter(t):
+    reset_handler(role)
 
 #setup hardware
 buzzer = PWM(Pin(buzzer_pin), freq=2500, duty_u16=0)
@@ -196,13 +200,15 @@ boxes = []
 for i in range(0, len(button_pins)):
     boxes.append(box(button_pin=button_pins[i], led_pin=led_pins[i], id=ids[i], irq=True))
 
+for i in boxes:
+    i.led.off()
 
 
 ### SWITCHBOARD ###
 # 1 - DEBUG
 # 2 - MUTE (must disable neopixel to read)
 # 3 - EGG
-# 4 - 
+# 4 - AUTORESET
 # 5 - BRANCH
 # 6 - ACTIVATE MULTIBUZZER
 switches = []
@@ -212,8 +218,14 @@ for i in range(0, len(switch_pins)):
 
 if not switches[1].button.value():
     mute = True
+    print("Muted")
 else: mute = False
 
+if not switches[3].button.value():
+    autoreset = True
+    print("Autoreset enabled")
+else: autoreset = False
+reset_timer = Timer()
 
 #initialise neopixel after mute check
 pixel = NeoPixel(Pin(pixel_pin), 1)
@@ -228,7 +240,7 @@ def egg(songfile):
         song = songf.read()
     song.replace('\"', " ")
     song.replace('\'', " ")
-    print(song)
+    #print(song)
     track = music(song, pin = Pin(13))
     while True:
         track.tick()
@@ -236,6 +248,7 @@ def egg(songfile):
 
 
 if not switches[2].button.value() and not mute:
+    print("Testing speaker")
     egg(song)
 ### END EGG ###
 
@@ -277,6 +290,7 @@ while True:
     #setup check
 
     if not switches[0].button.value():
+        print("Debugging")
         pixel.fill((0, 255, 0))
         pixel.write()
         
@@ -314,10 +328,10 @@ status_timer.init(period=1000, callback=status_toggle)
 
 print("Entering main loop")
 
-
-
     
 lock = False
+
+role = "standalone" # disable UART until further notice
 
 if role == 'main':
     while True:
@@ -364,9 +378,6 @@ else:
 
         elif control.button.value() == 1:
             reset_handler(role)
-
-#while True:
-#    game_loop(role=role)
 
 
 

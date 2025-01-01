@@ -40,6 +40,21 @@ USA/other international pricing for a v0.2 set may vary, but is currently $210 i
 
 If you've founded a new quizbowl society and don't yet have a buzzer set, and your society is unable to pay full price for a Kitsune set, please let me know and we might be able to work out a discount or a free set. More quizbowl societies = a bigger UK quizbowl scene!
 
+## Maintenance
+
+There shouldn't really be any need to do anything, but if you encounter issues, Kitsune can easily be disassembled. 
+
+The central box is held together with four M3x20 BHCS into M3x4x5 (VORON standard) heat-set inserts, which can be unscrewed with a 2mm hex driver. Take care when separating the top and bottom halves - the buzzer attaches to the mainboard via a JST-XH 2-pin connector, which can be removed to separate all the parts.
+
+Individual buzzer boxes are held together by two M2x10 (M2x8, M2x12 also work) SHCS self-tapping screws. These can be unscrewed with a 1.5mm hex driver, **but this is not recommended unless the buzzer has stopped working.** As these screws are self-tapping, screwing them in several times or too tight can eventually lead to the thread being stripped from the plastic. Only tighten them down as much as necessary to secure the buzzer box.
+
+If the LED on the buzzer box stops working, check that the legs are still soldered to the PJ-320A connector inside the box, and resolder if necessary. The LED is not glued into place so it may shift in its slot in the top of the box, but this is normal and not cause for concern. The PJ-320A connector is also not glued, but is press-fit into the box bottom.
+
+If the buzzer itself (cylinder on the main box) comes loose in its press-fit slot, it can be secured with a _tiny_ dab of superglue on the side before reinserting it.
+
+### Firmware updates
+
+If, for some reason, you need to reinstall the Kitsune program on the board, this can be done using an IDE such as Thonny or VSCode with the MicroPico extension installed. If you have somehow managed to remove MicroPython from the Pico, it can be reflashed by powering it on or resetting whilst the BOOT button is depressed, and then copying the MicroPython UF2 file to the USB device that will appear on your computer. Of course, if you want to change how Kitsune works, go wild - it's all written in Python, somewhat messy but should be broadly intelligible.
 
 ## Credits and disclaimers
 I've made this project open-source under a modified Commons Clause. This means that you can make your own Kitsune set, but not sell it. I'm not a lawyer, so in case I've done anything wrong, in plain English - _please don't sell Kitsunes_.

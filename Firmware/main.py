@@ -192,6 +192,9 @@ status_timer = Timer()
 def status_toggle(t):
     status_led.toggle()
 
+def prompt_toggle(t):
+    control.led.toggle() # type: ignore
+
 
 control = box(control_pin, led_pin=control_led, id="Control")
 control.led.off() # type: ignore
@@ -286,10 +289,15 @@ else:
 
 
 print("Entering setup loop")
+
+prompt_flash = Timer()
+prompt_flash.init(period=1000, mode=Timer.PERIODIC, callback=prompt_toggle) # type: ignore
+
 while True: 
     #setup check
 
     if not switches[0].button.value():
+        prompt_flash.deinit()
         print("Debugging")
         pixel.fill((0, 255, 0))
         pixel.write()
@@ -318,12 +326,14 @@ while True:
     
     elif control.button.value() == 1:
         lock = False
+        
         break
     elif role == 'branch':
         break
 
 
 #main loop
+prompt_flash.deinit()
 status_timer.init(period=1000, callback=status_toggle)
 
 print("Entering main loop")

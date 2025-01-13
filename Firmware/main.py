@@ -70,7 +70,7 @@ class box:
 def buzz(speaker):
     #speaker.duty_u16(50000)
     if not mute:
-        speaker.duty_u16(50000)
+        speaker.duty_u16(62500)
         speaker.freq(900)
 
         speaker.freq(300)
@@ -78,28 +78,28 @@ def buzz(speaker):
 
         speaker.duty_u16(0)
         utime.sleep_ms(25)
-        speaker.duty_u16(50000)
+        speaker.duty_u16(62500)
 
         speaker.freq(750)
         utime.sleep_ms(125)
         
         speaker.duty_u16(0)
         utime.sleep_ms(25)
-        speaker.duty_u16(50000)
+        speaker.duty_u16(62500)
         
         speaker.freq(300)
         utime.sleep_ms(125)
         
         speaker.duty_u16(0)
         utime.sleep_ms(25)
-        speaker.duty_u16(50000)
+        speaker.duty_u16(62500)
 
         speaker.freq(750)
         utime.sleep_ms(125)
         
         speaker.duty_u16(0)
         utime.sleep_ms(25)
-        speaker.duty_u16(50000)
+        speaker.duty_u16(62500)
 
         speaker.freq(300)
         utime.sleep_ms(125)

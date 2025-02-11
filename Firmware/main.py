@@ -21,9 +21,9 @@ led_pins = [3, 5, 7, 9, 17, 19, 21, 27] #v0.2 pins
 ids = ["A1", "A2", "A3", "A4", "B4", "B3", "B2", "B1"]
 
 # starting variable values
-lock = True
-flag = False
-active = None
+lock = True # lock prevents multiple buzzes
+flag = False # flag raised when buzz detected, signals loop to check active
+active = None # box that buzzed
 
 def handle_buzz(box):
     #global lock

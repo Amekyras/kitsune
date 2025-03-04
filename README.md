@@ -28,7 +28,7 @@ If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox
 
 ## Prices:
 
-Kitsune v0.1 - £125 (while stocks last)
+~Kitsune v0.1 - £125 (while stocks last)~
 
 Kitsune v0.2 - £150
 

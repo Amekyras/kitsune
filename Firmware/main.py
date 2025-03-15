@@ -20,6 +20,16 @@ button_pins = [2, 4, 6, 8, 16, 18, 20, 26] #v0.2 pins
 led_pins = [3, 5, 7, 9, 17, 19, 21, 27] #v0.2 pins
 ids = ["A1", "A2", "A3", "A4", "B4", "B3", "B2", "B1"]
 
+
+# make hardware class?
+
+class game:
+    def __init__(self, lock=False, flag=False, active=None):
+        self.lock = lock
+        self.flag = flag
+        self.active = active
+
+
 # starting variable values
 lock = True # lock prevents multiple buzzes
 flag = False # flag raised when buzz detected, signals loop to check active

@@ -1,126 +1,38 @@
 import utime
 import micropython
 from machine import *
+from hardware import *
+from functions import *
+from classes import *
 from neopixel import NeoPixel
 from buzzer_music import music
 import rp2
 
-buzzer_pin = 13
-status_pin = 25
-control_led = 15
-control_pin = 14
-pixel_pin = 23
-tx_pin = 0
-rx_pin = 1
-
-switch_pins = [28, 23, 22, 12, 11, 10] #v0.2 pins
-switch_ids = ["switch1", "switch2", "switch3", "switch4", "switch5", "switch6"]
-
-button_pins = [2, 4, 6, 8, 16, 18, 20, 26] #v0.2 pins
-led_pins = [3, 5, 7, 9, 17, 19, 21, 27] #v0.2 pins
-ids = ["A1", "A2", "A3", "A4", "B4", "B3", "B2", "B1"]
-
 
 # make hardware class?
 
-class game:
-    def __init__(self, lock=False, flag=False, active=None):
-        self.lock = lock
-        self.flag = flag
-        self.active = active
+
+
+
 
 
 # starting variable values
-lock = True # lock prevents multiple buzzes
-flag = False # flag raised when buzz detected, signals loop to check active
-active = None # box that buzzed
+#lock = True # lock prevents multiple buzzes
+#flag = False # flag raised when buzz detected, signals loop to check active
+#active = None # box that buzzed
 
-def handle_buzz(box):
-    #global lock
-    global active
-    global flag
+config = runtime_config()
 
-    if not flag:
-        #lock = True
-        flag = True
-        active = box
-
-        print(f"Successful buzz from {box.id}")
-
-
-class box:
-    """All inputs use this class, pass led_pin ID to add output"""
-    def __init__(self, button_pin, led_pin=None, id="", pull="down", irq=False):
-        if pull == "up":
-            self.button = Pin(button_pin, Pin.IN, Pin.PULL_UP)
-        else:
-            self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
-
-        if irq:
-            self.button.irq(handler=self.handle_press)
-
-        if led_pin is not None:
-            self.led = Pin(led_pin, Pin.OUT)
-        else:
-            self.led = None
-        
-        self.id = id
-        pass
-
-
-    def handle_press(self, c):
-        state = disable_irq()
-        if not lock:
-            micropython.schedule(handle_buzz, self)
-            print(f"buzz from {self.id}")
-        enable_irq(state)
+game = game_state()
 
 
 
-def buzz(speaker):
-    #speaker.duty_u16(50000)
-    if not mute:
-        speaker.duty_u16(62500)
-        speaker.freq(900)
 
-        speaker.freq(300)
-        utime.sleep_ms(125)
-
-        speaker.duty_u16(0)
-        utime.sleep_ms(25)
-        speaker.duty_u16(62500)
-
-        speaker.freq(750)
-        utime.sleep_ms(125)
-        
-        speaker.duty_u16(0)
-        utime.sleep_ms(25)
-        speaker.duty_u16(62500)
-        
-        speaker.freq(300)
-        utime.sleep_ms(125)
-        
-        speaker.duty_u16(0)
-        utime.sleep_ms(25)
-        speaker.duty_u16(62500)
-
-        speaker.freq(750)
-        utime.sleep_ms(125)
-        
-        speaker.duty_u16(0)
-        utime.sleep_ms(25)
-        speaker.duty_u16(62500)
-
-        speaker.freq(300)
-        utime.sleep_ms(125)
-
-        speaker.duty_u16(0)
-    return()
 
 
 def flash_pixel():
     r, g, b = pixel[0] # type: ignore
-    if lock:
+    if game.lock:
         if r == 0:
             pixel.fill((217, 121, 232))
         else:
@@ -146,28 +58,26 @@ def check_uart():
 def bundle_handler(mode):
     # respond to raised flag
     status_timer.deinit()
-    global lock
-    global flag
-    lock = True
-    flag = False
+
+    game.lock = True
+    game.flag = False
 
     if mode == "main":
         uart.write("lock")
 
     control.led.off() # type: ignore
-    active.led.on() # type: ignore
+    game.active.led.on() # type: ignore
     pixel.fill((255, 0, 0))
     pixel.write()
-    buzz(speaker=buzzer)
+    buzz(speaker=buzzer, config=config)
 
-    if autoreset:
+    if config.autoreset:
         reset_timer.init(mode=Timer.ONE_SHOT, period=10000, callback=autoresetter)
 
 
 def reset_handler(mode):
     print("Resetting")
     reset_timer.deinit()
-    global lock
 
     for i in boxes:
         i.led.off()
@@ -186,7 +96,7 @@ def reset_handler(mode):
         uart.write("ack\n")
 
     status_timer.init(period=1000, callback=status_toggle)
-    lock = False
+    game.lock = False
 
 
 def autoresetter(t):
@@ -206,12 +116,12 @@ def prompt_toggle(t):
     control.led.toggle() # type: ignore
 
 
-control = box(control_pin, led_pin=control_led, id="Control")
+control = box(game, control_pin, led_pin=control_led, id="Control")
 control.led.off() # type: ignore
 
 boxes = []
 for i in range(0, len(button_pins)):
-    boxes.append(box(button_pin=button_pins[i], led_pin=led_pins[i], id=ids[i], irq=True))
+    boxes.append(box(game, button_pin=button_pins[i], led_pin=led_pins[i], id=ids[i], irq=True))
 
 for i in boxes:
     i.led.off()
@@ -227,18 +137,28 @@ for i in boxes:
 switches = []
 
 for i in range(0, len(switch_pins)):
-    switches.append(box(button_pin=switch_pins[i], id=switch_ids[i], pull="up"))
+    switches.append(box(game, button_pin=switch_pins[i], id=switch_ids[i], pull="up"))
+
+if not switches[0].button.value():
+    config.debug = True
 
 if not switches[1].button.value():
-    mute = True
+    config.volume = 0
     print("Muted")
-else: mute = False
+else: 
+    config.volume = 62500
+
+if not switches[2].button.value():
+    config.test_speaker = True
 
 if not switches[3].button.value():
-    autoreset = True
+    config.autoreset = True
     print("Autoreset enabled")
-else: autoreset = False
-reset_timer = Timer()
+    reset_timer = Timer()
+
+else: 
+    config.autoreset = False
+    
 
 #initialise neopixel after mute check
 pixel = NeoPixel(Pin(pixel_pin), 1)
@@ -260,7 +180,7 @@ def egg(songfile):
         utime.sleep(0.04)
 
 
-if not switches[2].button.value() and not mute:
+if config.test_speaker and not config.mute:
     print("Testing speaker")
     egg(song)
 ### END EGG ###
@@ -270,7 +190,7 @@ if not switches[2].button.value() and not mute:
 #startup sound
 jingletrack = "0 G5 1 15 0.5039370059967041;1 F#5 1 15 0.5039370059967041;3 E5 3 15 0.5039370059967041;6 F#5 2 15 0.5039370059967041"
 jingle = music(jingletrack, pin=Pin(13), looping=False)
-if not mute:
+if not config.mute:
     while True:
         jingle.tick()
         utime.sleep(0.04)
@@ -335,7 +255,7 @@ while True:
             
     
     elif control.button.value() == 1:
-        lock = False
+        game.lock = False
         
         break
     elif role == 'branch':
@@ -349,20 +269,20 @@ status_timer.init(period=1000, callback=status_toggle)
 print("Entering main loop")
 
     
-lock = False
+game.lock = False
 
 role = "standalone" # disable UART until further notice
 
 if role == 'main':
     while True:
-        if not lock:
+        if not game.lock:
             if "buzz" in check_uart():
                 print("Buzz from branch")
-                lock = True
+                game.lock = True
                 status_timer.deinit()
                 uart.write("ack")
             
-            if flag:
+            if game.flag:
                 bundle_handler(role)
 
         elif control.button.value() == 1:
@@ -371,17 +291,17 @@ if role == 'main':
 elif role == 'branch':
     while True:
 
-        if not lock:
-            if flag:
+        if not game.lock:
+            if game.flag:
                 uart.write("buzz")
-                while not lock:
+                while not game.lock:
                     if "ack" in check_uart():
                         bundle_handler(role)
                     elif "lock" in check_uart():
-                        lock = True
+                        game.lock = True
                         status_timer.deinit()
             elif "lock" in check_uart():
-                lock = True
+                game.lock = True
                 status_timer.deinit()
 
         elif "reset" in check_uart():
@@ -391,9 +311,9 @@ elif role == 'branch':
 else:
     
     while True:
-        if not lock:
+        if not game.lock:
             control.led.on() # type: ignore
-            if flag:
+            if game.flag:
                 bundle_handler(role)
 
         elif control.button.value() == 1:

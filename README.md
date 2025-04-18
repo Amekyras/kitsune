@@ -34,7 +34,7 @@ Kitsune v0.2 - £150
 
 Free collection at certain UK tournaments or domestic shipping £5 (£7.50 for set of two)
 
-USA/other international pricing for a v0.2 set may vary, but is currently $210 including standard international shipping, not including any import taxes you may need to pay if they apply.
+USA/other international pricing for a v0.2 set may vary, but is currently whatever the currency conversion amounts to plus however much I need to pay for shipping and packing, not including any import taxes you may need to pay if they apply.
 
 Buying multiple sets - 10% discount for 2 or more sets
 

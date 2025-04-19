@@ -187,7 +187,7 @@ buzzer = PWM(Pin(buzzer_pin), freq=2500, duty_u16=0)
 
 status_led = Pin(status_pin, Pin.OUT)
 status_led.off()
-status_timer = Timer()
+status_timer = Timer(-1)
 
 def status_toggle(t):
     status_led.toggle()
@@ -228,7 +228,7 @@ if not switches[3].button.value():
     autoreset = True
     print("Autoreset enabled")
 else: autoreset = False
-reset_timer = Timer()
+reset_timer = Timer(-1)
 
 #initialise neopixel after mute check
 pixel = NeoPixel(Pin(pixel_pin), 1)
@@ -290,7 +290,7 @@ else:
 
 print("Entering setup loop")
 
-prompt_flash = Timer()
+prompt_flash = Timer(-1)
 prompt_flash.init(period=1000, mode=Timer.PERIODIC, callback=prompt_toggle) # type: ignore
 
 while True: 

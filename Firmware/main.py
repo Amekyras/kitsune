@@ -1,7 +1,7 @@
 import utime
 import micropython
 from machine import *
-from hardware import *
+import cfg
 from functions import *
 from classes import *
 from neopixel import NeoPixel
@@ -21,9 +21,9 @@ import rp2
 #flag = False # flag raised when buzz detected, signals loop to check active
 #active = None # box that buzzed
 
-config = runtime_config()
+config = cfg.runtime_config()
 
-game = game_state()
+#game = cfg.game
 
 
 
@@ -32,7 +32,7 @@ game = game_state()
 
 def flash_pixel():
     r, g, b = pixel[0] # type: ignore
-    if game.lock:
+    if cfg.game.lock:
         if r == 0:
             pixel.fill((217, 121, 232))
         else:
@@ -56,17 +56,18 @@ def check_uart():
         return ""
 
 def bundle_handler(mode):
+    print("Bundle called")
     # respond to raised flag
     status_timer.deinit()
 
-    game.lock = True
-    game.flag = False
+    cfg.game.lock = True
+    cfg.game.flag = False
 
     if mode == "main":
         uart.write("lock")
 
     control.led.off() # type: ignore
-    game.active.led.on() # type: ignore
+    cfg.game.active.led.on() # type: ignore
     pixel.fill((255, 0, 0))
     pixel.write()
     buzz(speaker=buzzer, config=config)
@@ -96,32 +97,33 @@ def reset_handler(mode):
         uart.write("ack\n")
 
     status_timer.init(period=1000, callback=status_toggle)
-    game.lock = False
+    cfg.game.lock = False
 
 
 def autoresetter(t):
     reset_handler(role)
 
 #setup hardware
-buzzer = PWM(Pin(buzzer_pin), freq=2500, duty_u16=0)
+buzzer = PWM(Pin(cfg.buzzer_pin), freq=2500, duty_u16=0)
 
-status_led = Pin(status_pin, Pin.OUT)
+status_led = Pin(cfg.status_pin, Pin.OUT)
 status_led.off()
-status_timer = Timer()
+status_timer = Timer(-1)
 
 def status_toggle(t):
     status_led.toggle()
+    print(f" Locked: {cfg.game.lock}, Flag: {cfg.game.flag}, Active: {cfg.game.active}")
 
 def prompt_toggle(t):
     control.led.toggle() # type: ignore
 
 
-control = box(game, control_pin, led_pin=control_led, id="Control")
+control = box(cfg.game, cfg.control_pin, led_pin=cfg.control_led, id="Control")
 control.led.off() # type: ignore
 
 boxes = []
-for i in range(0, len(button_pins)):
-    boxes.append(box(game, button_pin=button_pins[i], led_pin=led_pins[i], id=ids[i], irq=True))
+for i in range(0, len(cfg.button_pins)):
+    boxes.append(box(cfg.game, button_pin=cfg.button_pins[i], led_pin=cfg.led_pins[i], id=cfg.ids[i], irq=True))
 
 for i in boxes:
     i.led.off()
@@ -136,8 +138,8 @@ for i in boxes:
 # 6 - ACTIVATE MULTIBUZZER
 switches = []
 
-for i in range(0, len(switch_pins)):
-    switches.append(box(game, button_pin=switch_pins[i], id=switch_ids[i], pull="up"))
+for i in range(0, len(cfg.switch_pins)):
+    switches.append(box(cfg.game, button_pin=cfg.switch_pins[i], id=cfg.switch_ids[i], pull="up"))
 
 if not switches[0].button.value():
     config.debug = True
@@ -154,14 +156,15 @@ if not switches[2].button.value():
 if not switches[3].button.value():
     config.autoreset = True
     print("Autoreset enabled")
-    reset_timer = Timer()
+    
 
 else: 
     config.autoreset = False
     
+reset_timer = Timer(-1)
 
 #initialise neopixel after mute check
-pixel = NeoPixel(Pin(pixel_pin), 1)
+pixel = NeoPixel(Pin(cfg.pixel_pin), 1)
 pixel.fill((0, 0, 0))
 pixel.write()
 
@@ -211,7 +214,7 @@ if not switches[5].button.value():
         role = "main"
         print("Main mode")
     uart = UART(0) 
-    uart.init(tx=tx_pin, rx=rx_pin, bits=8, parity=None, stop=2, txbuf=32, rxbuf=32)
+    uart.init(tx=cfg.tx_pin, rx=cfg.rx_pin, bits=8, parity=None, stop=2, txbuf=32, rxbuf=32)
     uart.read()
 
 else:
@@ -220,11 +223,11 @@ else:
 
 print("Entering setup loop")
 
-prompt_flash = Timer()
+prompt_flash = Timer(-1)
 prompt_flash.init(period=1000, mode=Timer.PERIODIC, callback=prompt_toggle) # type: ignore
 
-while True: 
-    #setup check
+while True: #setup check
+    
 
     if not switches[0].button.value():
         prompt_flash.deinit()
@@ -255,7 +258,7 @@ while True:
             
     
     elif control.button.value() == 1:
-        game.lock = False
+        cfg.game.lock = False
         
         break
     elif role == 'branch':
@@ -269,20 +272,20 @@ status_timer.init(period=1000, callback=status_toggle)
 print("Entering main loop")
 
     
-game.lock = False
+cfg.game.lock = False
 
 role = "standalone" # disable UART until further notice
 
 if role == 'main':
     while True:
-        if not game.lock:
+        if not cfg.game.lock:
             if "buzz" in check_uart():
                 print("Buzz from branch")
-                game.lock = True
+                cfg.game.lock = True
                 status_timer.deinit()
                 uart.write("ack")
             
-            if game.flag:
+            if cfg.game.flag:
                 bundle_handler(role)
 
         elif control.button.value() == 1:
@@ -291,17 +294,17 @@ if role == 'main':
 elif role == 'branch':
     while True:
 
-        if not game.lock:
-            if game.flag:
+        if not cfg.game.lock:
+            if cfg.game.flag:
                 uart.write("buzz")
-                while not game.lock:
+                while not cfg.game.lock:
                     if "ack" in check_uart():
                         bundle_handler(role)
                     elif "lock" in check_uart():
-                        game.lock = True
+                        cfg.game.lock = True
                         status_timer.deinit()
             elif "lock" in check_uart():
-                game.lock = True
+                cfg.game.lock = True
                 status_timer.deinit()
 
         elif "reset" in check_uart():
@@ -311,9 +314,9 @@ elif role == 'branch':
 else:
     
     while True:
-        if not game.lock:
+        if not cfg.game.lock:
             control.led.on() # type: ignore
-            if game.flag:
+            if cfg.game.flag:
                 bundle_handler(role)
 
         elif control.button.value() == 1:

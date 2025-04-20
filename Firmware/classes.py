@@ -1,32 +1,15 @@
 import micropython
 import utime
 from machine import *
+import cfg
 #from functions import handle_buzz
 
 
-class runtime_config:
-    def __init__(self, debug=False, test_speaker=False, autoreset=False, role="standalone", volume=62500):
-        self.debug = debug
-        self.test_speaker = test_speaker
-        self.autoreset = autoreset
-        self.role = role
-        self.volume = volume
-
-        if self.volume > 0:
-            self.mute = False
-        else:
-            self.mute = True
 
 
-class game_state:
-    def __init__(self, lock=False, flag=False, active=None):
-        self.lock = lock
-        self.flag = flag
-        self.active = active
 
-config = runtime_config()    
 
-game = game_state()
+
 
 
 
@@ -50,15 +33,16 @@ class box():
 
         self.handler = handle_buzz
         
-        self.lock = game_state.lock
-        self.flag = game_state.flag
-        self.active = game_state.active
+        #self.game_state = game_state
+        #self.lock = game_state.lock
+        #self.flag = game_state.flag
+        #self.active = game_state.active
         
 
 
     def handle_press(self, c):
         state = disable_irq()
-        if not self.lock:
+        if not cfg.game.lock:
             micropython.schedule(self.handler, self)
             print(f"buzz from {self.id}")
         enable_irq(state)
@@ -70,12 +54,12 @@ class box():
 
 def handle_buzz(arg):
 
-    if not arg.flag:
-        arg.lock = True
-        arg.flag = True
-        arg.active = arg
+ 
+    #cfg.game.lock = True
+    cfg.game.flag = True
+    cfg.game.active = arg
 
-        print(f"Successful buzz from {arg.id}")
+    #print(f"Successful buzz from {arg.id}")
 
 def buzz(speaker, config):
     #speaker.duty_u16(50000)

@@ -13,6 +13,7 @@ button_pins = [2, 4, 6, 8, 16, 18, 20, 26] #v0.2 pins
 led_pins = [3, 5, 7, 9, 17, 19, 21, 27] #v0.2 pins
 ids = ["A1", "A2", "A3", "A4", "B4", "B3", "B2", "B1"]
 
+
 class runtime_config:
     def __init__(self, debug=False, test_speaker=False, autoreset=False, role="standalone", volume=62500):
         self.debug = debug

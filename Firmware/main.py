@@ -9,7 +9,7 @@ from buzzer_music import music
 import rp2
 
 config = cfg.runtime_config()
-
+#global buzz_timer
 
 #region func defs
 
@@ -53,6 +53,7 @@ def bundle_handler(mode):
     cfg.game.active.led.on() # type: ignore
     pixel.fill((255, 0, 0))
     pixel.write()
+    #print(f"{cfg.game.active.id} at {buzz_timer}") # type: ignore
     buzz(speaker=buzzer, config=config)
 
     if config.autoreset:
@@ -65,7 +66,7 @@ def reset_handler(mode):
 
     for i in boxes:
         i.led.off()
-    control.led.on() # type: ignore
+    #control.led.on() # type: ignore
 
     pixel.fill((0, 0, 0))
     pixel.write()
@@ -80,6 +81,8 @@ def reset_handler(mode):
     #    uart.write("ack\n")
 
     status_timer.init(period=1000, callback=status_toggle)
+    utime.sleep_ms(200)
+    buzz_timer = utime.ticks_ms() # reset timer
     cfg.game.lock = False
 
 
@@ -95,9 +98,11 @@ status_led = Pin(cfg.status_pin, Pin.OUT)
 status_led.off()
 status_timer = Timer(-1)
 
+#buzz_timer = utime.ticks_ms()
+
 def status_toggle(t):
     status_led.toggle()
-    print(f" Locked: {cfg.game.lock}, Flag: {cfg.game.flag}, Active: {cfg.game.active}")
+    #print(f" Locked: {cfg.game.lock}, Flag: {cfg.game.flag}, Active: {cfg.game.active}")
 
 def prompt_toggle(t):
     control.led.toggle() # type: ignore
@@ -253,6 +258,7 @@ print("Entering main loop")
 cfg.game.lock = False
 
 role = "standalone" # disable UART until further notice
+#buzz_timer = utime.ticks_ms() # reset timer
 
 if False:#role == 'main':
     while True:

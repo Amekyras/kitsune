@@ -8,27 +8,10 @@ from neopixel import NeoPixel
 from buzzer_music import music
 import rp2
 
-
-# make hardware class?
-
-
-
-
-
-
-# starting variable values
-#lock = True # lock prevents multiple buzzes
-#flag = False # flag raised when buzz detected, signals loop to check active
-#active = None # box that buzzed
-
 config = cfg.runtime_config()
 
-#game = cfg.game
 
-
-
-
-
+#region func defs
 
 def flash_pixel():
     r, g, b = pixel[0] # type: ignore
@@ -44,7 +27,7 @@ def flash_pixel():
     #pixel_timer.init(mode=Timer.ONE_SHOT, period=1000, callback=flash_pixel(toggle))
 
 
-def check_uart():
+def check_uart(uart):
     if uart.any():
         data = uart.read()
         if data:
@@ -63,8 +46,8 @@ def bundle_handler(mode):
     cfg.game.lock = True
     cfg.game.flag = False
 
-    if mode == "main":
-        uart.write("lock")
+    #if mode == "main":
+    #    uart.write("lock")
 
     control.led.off() # type: ignore
     cfg.game.active.led.on() # type: ignore
@@ -87,14 +70,14 @@ def reset_handler(mode):
     pixel.fill((0, 0, 0))
     pixel.write()
 
-    if mode == 'main':
-        uart.write("reset")
-        #while True:
+    #if mode == 'main':
+    #    uart.write("reset")
+    #    #while True:
         #    if "ack" in check_uart():
         #        break
 
-    if mode == 'branch':
-        uart.write("ack\n")
+    #if mode == 'branch':
+    #    uart.write("ack\n")
 
     status_timer.init(period=1000, callback=status_toggle)
     cfg.game.lock = False
@@ -103,7 +86,9 @@ def reset_handler(mode):
 def autoresetter(t):
     reset_handler(role)
 
-#setup hardware
+#endregion
+
+#region setup hardware
 buzzer = PWM(Pin(cfg.buzzer_pin), freq=2500, duty_u16=0)
 
 status_led = Pin(cfg.status_pin, Pin.OUT)
@@ -117,6 +102,8 @@ def status_toggle(t):
 def prompt_toggle(t):
     control.led.toggle() # type: ignore
 
+reset_timer = Timer(-1)
+
 
 control = box(cfg.game, cfg.control_pin, led_pin=cfg.control_led, id="Control")
 control.led.off() # type: ignore
@@ -128,7 +115,9 @@ for i in range(0, len(cfg.button_pins)):
 for i in boxes:
     i.led.off()
 
+#endregion
 
+#region switchboard
 ### SWITCHBOARD ###
 # 1 - DEBUG
 # 2 - MUTE (must disable neopixel to read)
@@ -156,19 +145,25 @@ if not switches[2].button.value():
 if not switches[3].button.value():
     config.autoreset = True
     print("Autoreset enabled")
-    
-
 else: 
     config.autoreset = False
     
-reset_timer = Timer(-1)
+if not switches[4].button.value() and not switches[5].button.value():
+    config.role = "branch"
+elif switches[4].button.value() and not switches[5].button.value():
+    config.role = "main"
+else:
+    config.role = "standalone"
+#endregion
+
+
 
 #initialise neopixel after mute check
 pixel = NeoPixel(Pin(cfg.pixel_pin), 1)
 pixel.fill((0, 0, 0))
 pixel.write()
 
-
+#region speaker test
 ### EASTER EGG DETECTION/EXECUTION ###
 song = "cara.txt"
 def egg(songfile):
@@ -187,10 +182,9 @@ if config.test_speaker and not config.mute:
     print("Testing speaker")
     egg(song)
 ### END EGG ###
+#endregion
 
-
-
-#startup sound
+#region startup sound
 jingletrack = "0 G5 1 15 0.5039370059967041;1 F#5 1 15 0.5039370059967041;3 E5 3 15 0.5039370059967041;6 F#5 2 15 0.5039370059967041"
 jingle = music(jingletrack, pin=Pin(13), looping=False)
 if not config.mute:
@@ -202,25 +196,9 @@ if not config.mute:
             break
 buzzer.duty_u16(0) #kill buzzer
 
-# check for multibuzzer
-role = "standalone"
-mb = False
-if not switches[5].button.value():
-    mb = True
-    if not switches[4].button.value():
-        role = "branch"
-        print("Branch mode")
-    else:
-        role = "main"
-        print("Main mode")
-    uart = UART(0) 
-    uart.init(tx=cfg.tx_pin, rx=cfg.rx_pin, bits=8, parity=None, stop=2, txbuf=32, rxbuf=32)
-    uart.read()
+#endregion
 
-else:
-    print("Standalone mode")
-
-
+#region setup loop
 print("Entering setup loop")
 
 prompt_flash = Timer(-1)
@@ -261,11 +239,11 @@ while True: #setup check
         cfg.game.lock = False
         
         break
-    elif role == 'branch':
+    elif config.role == 'branch':
         break
+#endregion
 
-
-#main loop
+#region main loop
 prompt_flash.deinit()
 status_timer.init(period=1000, callback=status_toggle)
 
@@ -276,7 +254,7 @@ cfg.game.lock = False
 
 role = "standalone" # disable UART until further notice
 
-if role == 'main':
+if False:#role == 'main':
     while True:
         if not cfg.game.lock:
             if "buzz" in check_uart():
@@ -291,7 +269,7 @@ if role == 'main':
         elif control.button.value() == 1:
             reset_handler(role)
 
-elif role == 'branch':
+elif False:# role == 'branch':
     while True:
 
         if not cfg.game.lock:
@@ -322,7 +300,7 @@ else:
         elif control.button.value() == 1:
             reset_handler(role)
 
-
+#endregion
 
         
      

@@ -158,6 +158,7 @@ def reset_handler(mode):
     print("Resetting")
     reset_timer.deinit()
     global lock
+    global flag
 
     for i in boxes:
         i.led.off()
@@ -176,6 +177,7 @@ def reset_handler(mode):
         uart.write("ack\n")
 
     status_timer.init(period=1000, callback=status_toggle)
+    flag = False
     lock = False
 
 

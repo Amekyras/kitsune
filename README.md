@@ -24,6 +24,12 @@ If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox
     - Automatic reset
     - Multibuzzer branch mode (currently inactive)
     - Multibuzzer main mode (currently inactive)
+      
+- Kitsune v0.3 (upcoming)
+  - Replaced audio jacks with PJ306 metal jacks to increase reliability
+  
+- Kitsune++ (upcoming)
+  - Ten-player version of Kitsune v0.3
 
 
 ## Prices:

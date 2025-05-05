@@ -34,9 +34,13 @@ If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox
 
 ## Prices:
 
-~Kitsune v0.1 - £125 (while stocks last)~
-
 Kitsune v0.2 - £150
+
+Kitsune v0.3 - £150 (not yet available, let me know if you'd like to be on a waiting list)
+
+Kitsune++ v0.1 - £185 (comes with 12 buzzers and 12 cables)
+
+'Grab bag' - Kitsune v0.2 and 9 buzzers, random colours, no cables included - £100
 
 Free collection at certain UK tournaments or domestic shipping £5 (£7.50 for set of two)
 

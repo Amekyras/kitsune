@@ -13,6 +13,14 @@ config = cfg.runtime_config()
 
 #region func defs
 
+refractory = False
+
+def reset_refractory(t):
+    global refractory
+    refractory = False
+    
+refractory_timer = Timer(-1)
+
 def flash_pixel():
     r, g, b = pixel[0] # type: ignore
     if cfg.game.lock:
@@ -79,15 +87,18 @@ def reset_handler(mode):
 
     #if mode == 'branch':
     #    uart.write("ack\n")
-
+    refractory_timer.init(period=200, mode=Timer.ONE_SHOT, callback=reset_refractory)
     status_timer.init(period=1000, callback=status_toggle)
-    utime.sleep_ms(200)
+    #utime.sleep_ms(200)
     buzz_timer = utime.ticks_ms() # reset timer
     cfg.game.lock = False
 
 
 def autoresetter(t):
     reset_handler(role)
+
+
+
 
 #endregion
 
@@ -260,6 +271,8 @@ cfg.game.lock = False
 role = "standalone" # disable UART until further notice
 #buzz_timer = utime.ticks_ms() # reset timer
 
+
+
 if False:#role == 'main':
     while True:
         if not cfg.game.lock:
@@ -298,7 +311,11 @@ elif False:# role == 'branch':
 else:
     
     while True:
-        if not cfg.game.lock:
+        if refractory:
+            cfg.game.lock = False
+            cfg.game.flag = False
+
+        elif not cfg.game.lock:
             control.led.on() # type: ignore
             if cfg.game.flag:
                 bundle_handler(role)

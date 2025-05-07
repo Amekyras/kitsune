@@ -45,6 +45,8 @@ class box():
         if not cfg.game.lock:
             micropython.schedule(self.handler, self)
             print(f"buzz from {self.id}")
+        else:
+            print(f"locked-out buzz from {self.id}")
         enable_irq(state)
 
     

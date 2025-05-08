@@ -8,6 +8,8 @@ from neopixel import NeoPixel
 from buzzer_music import music
 import rp2
 
+micropython.alloc_emergency_exception_buf(100)
+
 config = cfg.runtime_config()
 #global buzz_timer
 
@@ -18,7 +20,7 @@ refractory = False
 def reset_refractory(t):
     global refractory
     refractory = False
-    
+     
 refractory_timer = Timer(-1)
 
 def flash_pixel():

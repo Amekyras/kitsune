@@ -1,6 +1,3 @@
-import utime
-import micropython
-from machine import *
 import cfg
 from functions import *
 from classes import *
@@ -13,15 +10,24 @@ micropython.alloc_emergency_exception_buf(100)
 config = cfg.runtime_config()
 #global buzz_timer
 
+#region vars
+refractory_timer = Timer(-1) #prevents buzzes immediately after reset (200ms)
+refractory = False
+
+status_timer = Timer(-1) #flashes status LED every second
+prompt_flash = Timer(-1) #flashes control LED to prompt start
+reset_timer = Timer(-1) #resets buzzers after 10s
+
+
+#endregion
+
 #region func defs
 
-refractory = False
 
 def reset_refractory(t):
     global refractory
     refractory = False
      
-refractory_timer = Timer(-1)
 
 def flash_pixel():
     r, g, b = pixel[0] # type: ignore
@@ -37,16 +43,6 @@ def flash_pixel():
     #pixel_timer.init(mode=Timer.ONE_SHOT, period=1000, callback=flash_pixel(toggle))
 
 
-def check_uart(uart):
-    if uart.any():
-        data = uart.read()
-        if data:
-            print(data)
-            return str(data)
-        else:
-            return ""
-    else:
-        return ""
 
 def bundle_handler(mode):
     print("Bundle called")
@@ -56,14 +52,10 @@ def bundle_handler(mode):
     cfg.game.lock = True
     cfg.game.flag = False
 
-    #if mode == "main":
-    #    uart.write("lock")
-
     control.led.off() # type: ignore
     cfg.game.active.led.on() # type: ignore
     pixel.fill((255, 0, 0))
     pixel.write()
-    #print(f"{cfg.game.active.id} at {buzz_timer}") # type: ignore
     buzz(speaker=buzzer, config=config)
 
     if config.autoreset:
@@ -81,18 +73,9 @@ def reset_handler(mode):
     pixel.fill((0, 0, 0))
     pixel.write()
 
-    #if mode == 'main':
-    #    uart.write("reset")
-    #    #while True:
-        #    if "ack" in check_uart():
-        #        break
-
-    #if mode == 'branch':
-    #    uart.write("ack\n")
     refractory_timer.init(period=200, mode=Timer.ONE_SHOT, callback=reset_refractory)
     status_timer.init(period=1000, callback=status_toggle)
-    #utime.sleep_ms(200)
-    buzz_timer = utime.ticks_ms() # reset timer
+
     cfg.game.lock = False
 
 
@@ -109,7 +92,6 @@ buzzer = PWM(Pin(cfg.buzzer_pin), freq=2500, duty_u16=0)
 
 status_led = Pin(cfg.status_pin, Pin.OUT)
 status_led.off()
-status_timer = Timer(-1)
 
 #buzz_timer = utime.ticks_ms()
 
@@ -120,7 +102,6 @@ def status_toggle(t):
 def prompt_toggle(t):
     control.led.toggle() # type: ignore
 
-reset_timer = Timer(-1)
 
 
 control = box(cfg.game, cfg.control_pin, led_pin=cfg.control_led, id="Control")
@@ -219,7 +200,6 @@ buzzer.duty_u16(0) #kill buzzer
 #region setup loop
 print("Entering setup loop")
 
-prompt_flash = Timer(-1)
 prompt_flash.init(period=1000, mode=Timer.PERIODIC, callback=prompt_toggle) # type: ignore
 
 while True: #setup check
@@ -271,59 +251,19 @@ print("Entering main loop")
 cfg.game.lock = False
 
 role = "standalone" # disable UART until further notice
-#buzz_timer = utime.ticks_ms() # reset timer
 
+while True:
+    if refractory and (cfg.game.lock or cfg.game.flag):
+        cfg.game.lock = False
+        cfg.game.flag = False
 
+    elif not cfg.game.lock:
+        control.led.on() # type: ignore
+        if cfg.game.flag:
+            bundle_handler(role)
 
-if False:#role == 'main':
-    while True:
-        if not cfg.game.lock:
-            if "buzz" in check_uart():
-                print("Buzz from branch")
-                cfg.game.lock = True
-                status_timer.deinit()
-                uart.write("ack")
-            
-            if cfg.game.flag:
-                bundle_handler(role)
-
-        elif control.button.value() == 1:
-            reset_handler(role)
-
-elif False:# role == 'branch':
-    while True:
-
-        if not cfg.game.lock:
-            if cfg.game.flag:
-                uart.write("buzz")
-                while not cfg.game.lock:
-                    if "ack" in check_uart():
-                        bundle_handler(role)
-                    elif "lock" in check_uart():
-                        cfg.game.lock = True
-                        status_timer.deinit()
-            elif "lock" in check_uart():
-                cfg.game.lock = True
-                status_timer.deinit()
-
-        elif "reset" in check_uart():
-            print("Resetting branch")
-            reset_handler(role)
-
-else:
-    
-    while True:
-        if refractory:
-            cfg.game.lock = False
-            cfg.game.flag = False
-
-        elif not cfg.game.lock:
-            control.led.on() # type: ignore
-            if cfg.game.flag:
-                bundle_handler(role)
-
-        elif control.button.value() == 1:
-            reset_handler(role)
+    elif control.button.value() == 1: #query control box rather than resetting on interrupt
+        reset_handler(role)
 
 #endregion
 

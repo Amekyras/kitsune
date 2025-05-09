@@ -22,7 +22,7 @@ class box():
             self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
 
         if irq:
-            self.button.irq(handler=self.handle_press)
+            self.button.irq(handler=self.handle_press,trigger=Pin.IRQ_RISING)
 
         if led_pin is not None:
             self.led = Pin(led_pin, Pin.OUT)

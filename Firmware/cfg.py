@@ -1,3 +1,7 @@
+import utime
+import micropython
+from machine import *
+
 buzzer_pin = 13
 status_pin = 25
 control_led = 15

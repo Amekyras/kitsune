@@ -46,7 +46,13 @@ Free collection at certain UK tournaments or domestic shipping £5 (£7.50 for s
 
 USA/other international pricing for a v0.2 set may vary, but is currently whatever the currency conversion amounts to plus however much I need to pay for shipping and packing, not including any import taxes you may need to pay if they apply.
 
+### Discounts
+
 Buying multiple sets - 10% discount for 2 or more sets
+
+No cables needed - minus £10
+
+Compact 'Kit' buzzers using clicky tactile switch rather than red springy switch - minus £10
 
 ### New Societies Scheme
 

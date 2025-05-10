@@ -21,7 +21,7 @@ class box():
         else:
             self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
 
-        if irq:
+        if irq and not cfg.game.debug:
             self.button.irq(handler=self.handle_press,trigger=Pin.IRQ_RISING)
 
         if led_pin is not None:

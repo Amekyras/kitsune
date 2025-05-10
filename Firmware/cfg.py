@@ -26,7 +26,7 @@ p10_pins = {
     "switch_ids": ["switch1", "switch2", "switch3", "switch4"],
 }
 
-pinout = p8_pins #switch pinouts for ++ board are p10_pins
+pinout = p10_pins #switch pinouts for ++ board are p10_pins
 
 switch_pins = pinout["switch_pins"]
 switch_ids = pinout["switch_ids"]
@@ -56,5 +56,8 @@ class game_state:
         self.lock = lock
         self.flag = flag
         self.active = active
+        self.debug = False
 
 game = game_state()
+
+config = runtime_config()

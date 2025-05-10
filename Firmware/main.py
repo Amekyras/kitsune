@@ -87,6 +87,40 @@ def autoresetter(t):
 
 #endregion
 
+#region switchboard
+### SWITCHBOARD ###
+# 1 - DEBUG
+# 2 - MUTE (must disable neopixel to read)
+# 3 - EGG
+# 4 - AUTORESET
+# 5 - BRANCH
+# 6 - ACTIVATE MULTIBUZZER
+switches = []
+
+for i in range(0, len(cfg.switch_pins)):
+    switches.append(box(cfg.game, button_pin=cfg.switch_pins[i], id=cfg.switch_ids[i], pull="up"))
+
+if not switches[0].button.value():
+    config.debug = True
+    cfg.game.debug = True
+
+if not switches[1].button.value():
+    config.volume = 0
+    print("Muted")
+else: 
+    config.volume = 62500
+
+if not switches[2].button.value():
+    config.test_speaker = True
+
+if not switches[3].button.value():
+    config.autoreset = True
+    print("Autoreset enabled")
+else: 
+    config.autoreset = False
+    
+#endregion
+
 #region setup hardware
 buzzer = PWM(Pin(cfg.buzzer_pin), freq=2500, duty_u16=0)
 
@@ -116,38 +150,7 @@ for i in boxes:
 
 #endregion
 
-#region switchboard
-### SWITCHBOARD ###
-# 1 - DEBUG
-# 2 - MUTE (must disable neopixel to read)
-# 3 - EGG
-# 4 - AUTORESET
-# 5 - BRANCH
-# 6 - ACTIVATE MULTIBUZZER
-switches = []
 
-for i in range(0, len(cfg.switch_pins)):
-    switches.append(box(cfg.game, button_pin=cfg.switch_pins[i], id=cfg.switch_ids[i], pull="up"))
-
-if not switches[0].button.value():
-    config.debug = True
-
-if not switches[1].button.value():
-    config.volume = 0
-    print("Muted")
-else: 
-    config.volume = 62500
-
-if not switches[2].button.value():
-    config.test_speaker = True
-
-if not switches[3].button.value():
-    config.autoreset = True
-    print("Autoreset enabled")
-else: 
-    config.autoreset = False
-    
-#endregion
 
 
 
@@ -208,6 +211,8 @@ while True: #setup check
         #buzzer test loop
         testboxes = []
         testboxes.extend(boxes)
+        for i in testboxes:
+            i.button.irq(handler=None)
         testboxes.extend(switches)
         testboxes.append(control)
         while True:

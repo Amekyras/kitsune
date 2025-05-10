@@ -147,12 +147,6 @@ if not switches[3].button.value():
 else: 
     config.autoreset = False
     
-if not switches[4].button.value() and not switches[5].button.value():
-    config.role = "branch"
-elif switches[4].button.value() and not switches[5].button.value():
-    config.role = "main"
-else:
-    config.role = "standalone"
 #endregion
 
 

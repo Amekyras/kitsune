@@ -76,7 +76,9 @@ def reset_handler(mode):
     refractory_timer.init(period=200, mode=Timer.ONE_SHOT, callback=reset_refractory)
     status_timer.init(period=1000, callback=status_toggle)
 
+    cfg.game.flag = False
     cfg.game.lock = False
+
 
 
 def autoresetter(t):
@@ -236,8 +238,14 @@ while True: #setup check
         cfg.game.lock = False
         
         break
-    elif config.role == 'branch':
-        break
+    
+
+    else:
+        for i in boxes:
+            i.led.on()
+        
+    #elif config.role == 'branch':
+    #    break
 #endregion
 
 #region main loop
@@ -246,10 +254,14 @@ status_timer.init(period=1000, callback=status_toggle)
 
 print("Entering main loop")
 
-    
-cfg.game.lock = False
+#cfg.game.flag = False
+#cfg.game.lock = False
+
+#for i in boxes:
+#            i.led.off()
 
 role = "standalone" # disable UART until further notice
+reset_handler(role)
 
 while True:
     if refractory and (cfg.game.lock or cfg.game.flag):

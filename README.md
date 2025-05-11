@@ -50,7 +50,7 @@ USA/other international pricing for a v0.2 set may vary, but is currently whatev
 
 Buying multiple sets - 10% discount for 2 or more sets
 
-No cables needed - minus £10
+No cables needed - minus £10 - Cables used are 3.5mm TRS audio cables, any stereo headphone aux cable should work. This may be particularly useful if located outside the UK, as cables constitute most of the shipping volume and so increase the price.
 
 Compact 'Kit' buzzers using clicky tactile switch rather than red springy switch - minus £10
 

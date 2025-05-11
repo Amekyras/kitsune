@@ -82,9 +82,19 @@ Yes, I know that the code and photography are messy. I'm a psych student, not an
 Many thanks to https://github.com/james1236/buzzer_music for enabling me to include an easter egg or two :)
 
 ## Photos
+### Kitsune
 ![PXL_20241107_222718396](https://github.com/user-attachments/assets/b72bb5ca-9fba-4505-bb74-53a440e6cba6)
 ![PXL_20241111_130336351 MP](https://github.com/user-attachments/assets/2092b343-8ded-4a94-a322-e174ae3cba6e)
 ![PXL_20241031_170913548 MP](https://github.com/user-attachments/assets/c04d00e0-4f06-4814-b404-43c0fe9254da)
 ![PXL_20241231_172731974](https://github.com/user-attachments/assets/e08e6825-bfb9-4bc6-9257-21823b58a606)
 ![PXL_20250115_020840728 MP](https://github.com/user-attachments/assets/0f0f1921-f110-4ca0-b8ef-4f92146caa6f)
+
+###Kitsune++
+![top](https://github.com/user-attachments/assets/4ca15b17-23c5-4ac3-8665-f49d09c70d24)
+![bottom](https://github.com/user-attachments/assets/86120f3d-11bd-4be6-ae94-9833517a85d7)
+![frontright](https://github.com/user-attachments/assets/0ea4c165-09c4-4595-bd00-d722461d5031)
+![rearleft](https://github.com/user-attachments/assets/ee98e576-ab96-45c8-9e36-2d8af2ed5cb1)
+
+
+
 

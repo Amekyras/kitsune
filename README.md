@@ -25,10 +25,10 @@ If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox
     - Multibuzzer branch mode (currently inactive)
     - Multibuzzer main mode (currently inactive)
       
-- Kitsune v0.3 (upcoming)
+- Kitsune v0.3
   - Replaced audio jacks with PJ306 metal jacks to increase reliability
   
-- Kitsune++ (upcoming)
+- Kitsune++
   - Ten-player version of Kitsune v0.3
 
 
@@ -36,7 +36,7 @@ If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox
 
 Kitsune v0.2 - £145
 
-Kitsune v0.3 - £150 (not yet available, let me know if you'd like to be on a waiting list)
+Kitsune v0.3 - £150
 
 Kitsune++ v0.1 - £185 (comes with 12 buzzers and 12 cables)
 

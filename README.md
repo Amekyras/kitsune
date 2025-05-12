@@ -54,6 +54,10 @@ No cables needed - minus £10 - Cables used are 3.5mm TRS audio cables, any ster
 
 Compact 'Kit' buzzers using clicky tactile switch rather than red springy switch - minus £10
 
+### Refunds
+
+I can't easily do refunds because I'm one person with not much liquidity. However, if your set isn't working and it's my fault, I'll do everything I can to fix it or replace broken parts, and if I don't, you have my express permission to drag me on social media, accuse me of being a PPG merchant, and claim I'm bad at quiz (true).
+
 ### New Societies Scheme
 
 If you've founded a new quizbowl society and don't yet have a buzzer set, and your society is unable to pay full price for a Kitsune set, please let me know and we might be able to work out a discount or a free set. More quizbowl societies = a bigger UK quizbowl scene!

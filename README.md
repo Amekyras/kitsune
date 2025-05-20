@@ -85,6 +85,8 @@ Yes, I know that the code and photography are messy. I'm a psych student, not an
 
 Many thanks to https://github.com/james1236/buzzer_music for enabling me to include an easter egg or two :)
 
+TODO: implement USB device identity, to work with buzzin.live etc
+
 ## Photos
 ### Kitsune
 ![PXL_20241107_222718396](https://github.com/user-attachments/assets/b72bb5ca-9fba-4505-bb74-53a440e6cba6)

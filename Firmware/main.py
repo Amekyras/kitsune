@@ -7,7 +7,7 @@ import rp2
 
 micropython.alloc_emergency_exception_buf(100)
 
-config = cfg.runtime_config()
+config = cfg.runtime_config(volume=cfg.volume, freqmod=cfg.freqmod)
 #global buzz_timer
 
 #region vars

@@ -10,6 +10,9 @@ pixel_pin = 23
 #tx_pin = 0
 #rx_pin = 1
 
+volume = 100.0  # Default volume percentage
+freqmod = 100.0  # Default frequency modulation factor
+
 p8_pins = {
     "switch_pins": [28, 23, 22, 12, 11, 10], #v0.2 pins
     "button_pins": [2, 4, 6, 8, 16, 18, 20, 26], #v0.2 pins
@@ -39,12 +42,13 @@ ids = pinout["ids"]
 
 
 class runtime_config:
-    def __init__(self, debug=False, test_speaker=False, autoreset=False, role="standalone", volume=62500):
+    def __init__(self, debug=False, test_speaker=False, autoreset=False, role="standalone", volume=100.0, freqmod=100.0):
         self.debug = debug
         self.test_speaker = test_speaker
         self.autoreset = autoreset
         self.role = role
-        self.volume = volume
+        self.volume = round(volume * 65535 / 100)  # Convert percentage to duty cycle
+        self.freqmod = freqmod  # Frequency modulation factor
 
         if self.volume > 0:
             self.mute = False

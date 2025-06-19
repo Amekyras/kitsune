@@ -65,40 +65,41 @@ def handle_buzz(arg):
 
 def buzz(speaker, config):
     #speaker.duty_u16(50000)
-    volume = config.volume
+    volume = round(config.volume)
+    freqmod = (config.freqmod/100)
     if not config.mute:
-        speaker.duty_u16(62500)
-        speaker.freq(900)
+        speaker.duty_u16(volume)
+        speaker.freq(round(900*freqmod))
 
-        speaker.freq(300)
+        speaker.freq(round(300*freqmod))
         utime.sleep_ms(125)
 
         speaker.duty_u16(0)
         utime.sleep_ms(25)
-        speaker.duty_u16(62500)
+        speaker.duty_u16(volume)
 
-        speaker.freq(750)
+        speaker.freq(round(750*freqmod))
         utime.sleep_ms(125)
         
         speaker.duty_u16(0)
         utime.sleep_ms(25)
-        speaker.duty_u16(62500)
+        speaker.duty_u16(volume)
         
-        speaker.freq(300)
+        speaker.freq(round(300*freqmod))
         utime.sleep_ms(125)
         
         speaker.duty_u16(0)
         utime.sleep_ms(25)
-        speaker.duty_u16(62500)
+        speaker.duty_u16(volume)
 
-        speaker.freq(750)
+        speaker.freq(round(750*freqmod))
         utime.sleep_ms(125)
         
         speaker.duty_u16(0)
         utime.sleep_ms(25)
-        speaker.duty_u16(62500)
+        speaker.duty_u16(volume)
 
-        speaker.freq(300)
+        speaker.freq(round(300*freqmod))
         utime.sleep_ms(125)
 
         speaker.duty_u16(0)

@@ -144,7 +144,7 @@ control = box(cfg.game, cfg.control_pin, led_pin=cfg.control_led, id="Control")
 control.led.off() # type: ignore
 
 boxes = []
-for i in range(0, len(cfg.button_pins)):
+for i in range(0, len(cfg.button_pins)): # type: ignore
     boxes.append(box(cfg.game, button_pin=cfg.button_pins[i], led_pin=cfg.led_pins[i], id=cfg.ids[i], irq=True))
 
 for i in boxes:

@@ -101,6 +101,8 @@ TODO: implement USB device identity, to work with buzzin.live etc
 ![frontright](https://github.com/user-attachments/assets/0ea4c165-09c4-4595-bd00-d722461d5031)
 ![rearleft](https://github.com/user-attachments/assets/ee98e576-ab96-45c8-9e36-2d8af2ed5cb1)
 
+![1000017404](https://github.com/user-attachments/assets/bd281261-d5b0-48f5-8d10-aa4a35c9102d)
 
+![1000017403](https://github.com/user-attachments/assets/003a1c4b-e839-482c-b014-1469a85f4737)
 
 

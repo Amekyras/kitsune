@@ -98,7 +98,7 @@ TODO: implement USB device identity, to work with buzzin.live etc
 ![PXL_20241231_172731974](https://github.com/user-attachments/assets/e08e6825-bfb9-4bc6-9257-21823b58a606)
 ![PXL_20250115_020840728 MP](https://github.com/user-attachments/assets/0f0f1921-f110-4ca0-b8ef-4f92146caa6f)
 
-###Kitsune++
+### Kitsune++
 ![top](https://github.com/user-attachments/assets/4ca15b17-23c5-4ac3-8665-f49d09c70d24)
 ![bottom](https://github.com/user-attachments/assets/86120f3d-11bd-4be6-ae94-9833517a85d7)
 ![frontright](https://github.com/user-attachments/assets/0ea4c165-09c4-4595-bd00-d722461d5031)

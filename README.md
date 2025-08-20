@@ -2,7 +2,7 @@
 
 Kitsune is a lockout buzzer system designed by myself (Aisling Skeet). I started this project because lockout buzzer systems are ridiculously expensive for a relatively simple piece of hardware, and college quizbowl teams tend not to be absolutely flush with cash. The most common buzzer set in the UK retails for almost twice the price of a Kitsune set, and doesn't even come in fun colours! This throws a massive barrier in the way of new quiz societies. The other reason for the project is that I'd like to make a bit of extra cash, both for myself and for Durham Uni Quiz Society. Win-win!
 
-If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox.com or message amekyras on Discord. I sell them fully assembled in any filament colour I can get my hands on, with all necessary parts included save a USB-C cable (your phone charger probably works fine). I can add customisations (e.g. your society logo) for a small fee.
+If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox.com or message amekyras on Discord. I sell them fully assembled in any filament colour I can get my hands on, with all necessary parts included save a USB-C cable (your phone charger probably works fine). I can add customisations (e.g. your society logo) for a small fee (or free if it's very simple). *I can also make the clear acrylic version pictured at the bottom of the page, but this was originally just a show piece and I don't have regular laser cutter access, so I'll need a longer lead time.*
 
 ## Versions
 - Kitsune v0.1 - no longer available
@@ -16,17 +16,16 @@ If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox
   - All of the above, plus:
   - Additional onboard LEDS to provide a secondary indication mechanism
   - New JST-XH port to allow external battery usage (tested with 1x9V, should work with multiple AAs in series)
-  - New JST-XH port breaking out UART pins, will be used for connecting two boards together for 16-player mode at a later date
+  - New JST-XH port breaking out UART pins
   - Debug jumper replaced with 6-way DIP switch, controlling (left to right)
     - Debug mode
     - Speaker mute
     - Speaker test
     - Automatic reset
-    - Multibuzzer branch mode (currently inactive)
-    - Multibuzzer main mode (currently inactive)
       
-- Kitsune v0.3
-  - Replaced audio jacks with PJ306 metal jacks to increase reliability
+- Kitsune v0.3 - **I strongly recommend this version or the Plus Plus, the new jacks are much more resilient to being bashed around**
+  - Replaced audio jacks with PJ306 metal jacks to increase reliability, cleaned up PCB
+  - UART JST-XH not populated by default, specify if you'd like this!
   
 - Kitsune++
   - Ten-player version of Kitsune v0.3
@@ -72,6 +71,8 @@ Individual buzzer boxes are held together by two M2x10 (M2x8, M2x12 also work) S
 
 If the LED on the buzzer box stops working, check that the legs are still soldered to the PJ-320A connector inside the box, and resolder if necessary. The LED is not glued into place so it may shift in its slot in the top of the box, but this is normal and not cause for concern. The PJ-320A connector is also not glued, but is press-fit into the box bottom.
 
+Later buzzer boxes have a custom mini PCB to hold the jack, LED, and button, this eliminates any issues with the LED coming loose.
+
 If the buzzer itself (cylinder on the main box) comes loose in its press-fit slot, it can be secured with a _tiny_ dab of superglue on the side before reinserting it.
 
 ### Firmware updates
@@ -84,6 +85,8 @@ I've made this project open-source under a modified Commons Clause. This means t
 Yes, I know that the code and photography are messy. I'm a psych student, not an engineer.
 
 Many thanks to https://github.com/james1236/buzzer_music for enabling me to include an easter egg or two :)
+
+Absolutely enormous thanks to the Sanjay Mortimer Foundation for supporting me in building these - check them out, they're a fantastic charity! https://www.sanjaymortimerfoundation.org/
 
 TODO: implement USB device identity, to work with buzzin.live etc
 

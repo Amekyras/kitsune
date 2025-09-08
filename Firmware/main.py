@@ -4,6 +4,7 @@ from classes import *
 from neopixel import NeoPixel
 from buzzer_music import music
 import rp2
+import machine
 
 micropython.alloc_emergency_exception_buf(100)
 
@@ -54,12 +55,18 @@ def bundle_handler(mode):
 
     control.led.off() # type: ignore
     cfg.game.active.led.on() # type: ignore
-    pixel.fill((255, 0, 0))
+
+    if cfg.game.active.id[0] == "A": # type:ignore
+        pixel.fill(cfg.teama_colour)
+    elif cfg.game.active.id[0] == "B": # type:ignore
+        pixel.fill(cfg.teamb_colour)
+    else:
+        pixel.fill(cfg.def_colour)
     pixel.write()
     buzz(speaker=buzzer, config=config)
 
     if config.autoreset:
-        reset_timer.init(mode=Timer.ONE_SHOT, period=10000, callback=autoresetter)
+        reset_timer.init(mode=Timer.ONE_SHOT, period=cfg.reset_duration, callback=autoresetter)
 
 
 def reset_handler(mode):
@@ -263,18 +270,23 @@ print("Entering main loop")
 role = "standalone" # disable UART until further notice
 reset_handler(role)
 
-while True:
-    if refractory and (cfg.game.lock or cfg.game.flag):
-        cfg.game.lock = False
-        cfg.game.flag = False
+try:
+    while True:
+        if refractory and (cfg.game.lock or cfg.game.flag):
+            cfg.game.lock = False
+            cfg.game.flag = False
 
-    elif not cfg.game.lock:
-        control.led.on() # type: ignore
-        if cfg.game.flag:
-            bundle_handler(role)
+        elif not cfg.game.lock:
+            control.led.on() # type: ignore
+            if cfg.game.flag:
+                bundle_handler(role)
 
-    elif control.button.value() == 1: #query control box rather than resetting on interrupt
-        reset_handler(role)
+        elif control.button.value() == 1: #query control box rather than resetting on interrupt
+            reset_handler(role)
+except Exception as e:
+    print("Fatal error, resetting")
+
+machine.reset()
 
 #endregion
 

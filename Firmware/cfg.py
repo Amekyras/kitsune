@@ -1,6 +1,9 @@
-import utime
-import micropython
-from machine import *
+# pinouts and the like
+
+#import utime
+#import micropython
+#import machine
+from user_cfg import *
 
 buzzer_pin = 13
 status_pin = 25
@@ -10,8 +13,7 @@ pixel_pin = 23
 #tx_pin = 0
 #rx_pin = 1
 
-volume = 100.0  # Default volume percentage
-freqmod = 100.0  # Default frequency modulation factor
+
 
 p8_pins = {
     "switch_pins": [28, 23, 22, 12, 11, 10], #v0.2 pins

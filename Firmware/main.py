@@ -1,6 +1,6 @@
 import cfg
 from functions import *
-from classes import *
+from classes import * # type: ignore
 from neopixel import NeoPixel
 from buzzer_music import music
 import rp2

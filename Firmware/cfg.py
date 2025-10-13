@@ -15,7 +15,7 @@ pixel_pin = 23
 
 
 
-p8_pins = {
+p8_pins = { #base kitsune pins for v0.2 and v0.3 boards
     "switch_pins": [28, 23, 22, 12, 11, 10], #v0.2 pins
     "button_pins": [2, 4, 6, 8, 16, 18, 20, 26], #v0.2 pins
     "led_pins": [3, 5, 7, 9, 17, 19, 21, 27], #v0.2 pins
@@ -23,7 +23,7 @@ p8_pins = {
     "switch_ids": ["switch1", "switch2", "switch3", "switch4", "switch5", "switch6"],
 }
 
-p10_pins = {
+p10_pins = { #pins for kitsune++ v0.1 board
     "switch_pins": [28, 23, 22, 12], 
     "button_pins": [2, 4, 6, 8, 0, 10, 16, 18, 20, 26], 
     "led_pins": [3, 5, 7, 9, 1, 11, 17, 19, 21, 27], 
@@ -31,7 +31,15 @@ p10_pins = {
     "switch_ids": ["switch1", "switch2", "switch3", "switch4"],
 }
 
-pinout = p10_pins #switch pinouts for ++ board are p10_pins
+p10v1_pins = { #pins for kitsune++ v1.0 board - assign switches (read-once) and LEDs (write-only) to MCP23017
+    "switch_pins": [28, 23, 22, 12], 
+    "button_pins": [2, 4, 6, 8, 0, 10, 16, 18, 20, 26], 
+    "led_pins": [3, 5, 7, 9, 1, 11, 17, 19, 21, 27], 
+    "ids": ["A1", "A2", "A3", "A4", "A5", "B5", "B4", "B3", "B2", "B1"],
+    "switch_ids": ["switch1", "switch2", "switch3", "switch4"],
+}
+
+pinout = p10_pins
 
 switch_pins = pinout["switch_pins"]
 switch_ids = pinout["switch_ids"]

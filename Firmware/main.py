@@ -11,7 +11,7 @@ micropython.alloc_emergency_exception_buf(100)
 
 print(os.uname()) # type: ignore
 print(f"Firmware version: {cfg.firmware_version}")
-print(f"Pinout: {cfg.pinout}")
+print(f"Pinout: {cfg.pinout["name"]}")
 
 config = cfg.runtime_config(volume=cfg.volume, freqmod=cfg.freqmod)
 #global buzz_timer

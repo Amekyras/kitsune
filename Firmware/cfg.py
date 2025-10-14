@@ -23,6 +23,7 @@ p8_pins = { #base kitsune pins for v0.2 and v0.3 boards
     "led_pins": [3, 5, 7, 9, 17, 19, 21, 27], #v0.2 pins
     "ids": ["A1", "A2", "A3", "A4", "B4", "B3", "B2", "B1"],
     "switch_ids": ["switch1", "switch2", "switch3", "switch4", "switch5", "switch6"],
+    "name": "v0.2/v0.3"
 }
 
 p10_pins = { #pins for kitsune++ v0.1 board
@@ -31,6 +32,7 @@ p10_pins = { #pins for kitsune++ v0.1 board
     "led_pins": [3, 5, 7, 9, 1, 11, 17, 19, 21, 27], 
     "ids": ["A1", "A2", "A3", "A4", "A5", "B5", "B4", "B3", "B2", "B1"],
     "switch_ids": ["switch1", "switch2", "switch3", "switch4"],
+    "name": "++ v0.1"
 }
 
 p10v1_pins = { #pins for kitsune++ v1.0 board - assign switches (read-once) and LEDs (write-only) to MCP23017
@@ -39,6 +41,7 @@ p10v1_pins = { #pins for kitsune++ v1.0 board - assign switches (read-once) and 
     "led_pins": [3, 5, 7, 9, 1, 11, 17, 19, 21, 27], 
     "ids": ["A1", "A2", "A3", "A4", "A5", "B5", "B4", "B3", "B2", "B1"],
     "switch_ids": ["switch1", "switch2", "switch3", "switch4"],
+    "name": "v1.0++"
 }
 
 pinout = p10_pins

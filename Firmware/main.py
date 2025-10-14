@@ -5,8 +5,13 @@ from neopixel import NeoPixel
 from buzzer_music import music
 import rp2
 import machine
+import os
 
 micropython.alloc_emergency_exception_buf(100)
+
+print(os.uname()) # type: ignore
+print(f"Firmware version: {cfg.firmware_version}")
+print(f"Pinout: {cfg.pinout}")
 
 config = cfg.runtime_config(volume=cfg.volume, freqmod=cfg.freqmod)
 #global buzz_timer

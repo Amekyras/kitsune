@@ -9,7 +9,7 @@ import os
 
 micropython.alloc_emergency_exception_buf(100)
 
-print(os.uname()) # type: ignore
+print(os.uname())
 print(f"Firmware version: {cfg.firmware_version}")
 print(f"Pinout: {cfg.pinout["name"]}")
 

@@ -5,6 +5,8 @@ from neopixel import NeoPixel
 from buzzer_music import music
 import rp2
 import machine
+from machine import Pin, I2C
+import mcp23017
 
 micropython.alloc_emergency_exception_buf(100)
 
@@ -106,8 +108,18 @@ def autoresetter(t):
 # 6 - ACTIVATE MULTIBUZZER
 switches = []
 
-for i in range(0, len(cfg.switch_pins)):
-    switches.append(box(cfg.game, button_pin=cfg.switch_pins[i], id=cfg.switch_ids[i], pull="up"))
+
+if cfg.pinout == cfg.p10v1_pins:
+    i2c = I2C(scl=Pin(21), sda=Pin(20))
+#while True:
+    print(i2c.scan())
+    mcp = mcp23017.MCP23017(i2c, 0x20)
+
+    for i in range(0, len(cfg.switch_pins)):
+        switches.append(box(cfg.game, button_pin=cfg.switch_pins[i], id=cfg.switch_ids[i], pull="up", mcp=mcp))
+else:
+    for i in range(0, len(cfg.switch_pins)):
+        switches.append(box(cfg.game, button_pin=cfg.switch_pins[i], id=cfg.switch_ids[i], pull="up"))
 
 if not switches[0].button.value():
     config.debug = True

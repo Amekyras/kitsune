@@ -17,11 +17,14 @@ import mcp23017
 class box():
     """All inputs use this class, pass led_pin ID to add output"""
     def __init__(self, game_state, button_pin, handler=None, led_pin=None, id="", pull="down", irq=False, mcp=None):
-        if pull == "up":
-            self.button = Pin(button_pin, Pin.IN, Pin.PULL_UP)
+        if not mcp:
+            if pull == "up":
+                self.button = Pin(button_pin, Pin.IN, Pin.PULL_UP)
+            else:
+                self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
         else:
-            self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
-
+            self.button = mcp[button_pin].input(pull=1)
+            #self.button = mcp[button_pin]
         if irq and not cfg.game.debug:
             self.button.irq(handler=self.handle_press,trigger=Pin.IRQ_RISING)
 
@@ -31,7 +34,7 @@ class box():
 
         if led_pin is not None and mcp is None:
             self.led = Pin(led_pin, Pin.OUT)
-        elif mcp is not None:
+        elif led_pin is not None and mcp is not None:
             self.led = mcp.pin(led_pin, mode=0)
         else:
             self.led = None

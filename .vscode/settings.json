@@ -12,6 +12,7 @@
         "typings"
     ],
     "python.analysis.extraPaths": [
-        "~/.micropico-stubs/included"
+        "~/.micropico-stubs/included",
+        "typings"
     ]
 }

@@ -127,8 +127,9 @@ else:
         switches.append(box(cfg.game, button_pin=j, id=cfg.switch_ids[i], pull="up"))
 
 print (switches[0])
-print (type(switches[0].button))
+print (switches[0].button.value())
 if not switches[0].button.value():
+    print("Debug mode")
     config.debug = True
     cfg.game.debug = True
 
@@ -204,7 +205,7 @@ def egg(songfile):
 
 if config.test_speaker and not config.mute:
     print("Testing speaker")
-    egg(song)
+    #egg(song)
 ### END EGG ###
 #endregion
 

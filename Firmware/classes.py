@@ -50,8 +50,8 @@ class box():
         #    self.led
         if led_pin is not None:
             self.led = led_pin
-        if type(self.led) == "VirtualPin":
-            self.led.output() #type: ignore
+            if type(self.led) == "VirtualPin":
+                self.led.output() #type: ignore
         else:
             self.led = None
         

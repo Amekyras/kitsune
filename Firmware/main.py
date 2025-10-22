@@ -55,8 +55,8 @@ def bundle_handler(mode):
     cfg.game.lock = True
     cfg.game.flag = False
 
-    control.led.off() # type: ignore
-    cfg.game.active.led.on() # type: ignore
+    control.led_off() # type: ignore
+    cfg.game.active.led_on() # type: ignore
 
     if cfg.game.active.id[0] == "A": # type:ignore
         pixel.fill(cfg.teama_colour)
@@ -75,15 +75,23 @@ def reset_handler(mode):
     print("Resetting")
     reset_timer.deinit()
 
+    print("Resetting boxes")
+
     for i in boxes:
-        i.led.off()
+        i.led_off()
     #control.led.on() # type: ignore
+
+    print("Resetting pixel")
 
     pixel.fill((0, 0, 0))
     pixel.write()
 
+    print("Resetting timers")
+
     refractory_timer.init(period=200, mode=Timer.ONE_SHOT, callback=reset_refractory)
     status_timer.init(period=1000, callback=status_toggle)
+
+    print("Resetting game state")
 
     cfg.game.flag = False
     cfg.game.lock = False
@@ -111,15 +119,13 @@ switches = []
 
 if cfg.pinout == cfg.p10v1_pins:
     i2c = I2C(scl=Pin(21), sda=Pin(20))
-#while True:
     print(i2c.scan())
     mcp = mcp23017.MCP23017(i2c, 0x20)
-    print(type(mcp[cfg.switch_pins[0]]))
-    k = mcp[cfg.switch_pins[0]]
-    print(type(k))
+
     for i in range(0, len(cfg.switch_pins)):
+        mcp.pin(cfg.switch_pins[i], mode=1, pullup=True)
         j = mcp[cfg.switch_pins[i]]
-        print(type(j))
+        #print(type(j))
         switches.append(box(cfg.game, button_pin=j, id=cfg.switch_ids[i], pull="up"))
 else:
     for i in range(0, len(cfg.switch_pins)):
@@ -163,19 +169,39 @@ def status_toggle(t):
     #print(f" Locked: {cfg.game.lock}, Flag: {cfg.game.flag}, Active: {cfg.game.active}")
 
 def prompt_toggle(t):
-    control.led.toggle() # type: ignore
+    #control.led.toggle() # type: ignore
+
+    if control.led():
+        control.led_off() # type: ignore
+    else:
+        control.led_on() # type: ignore
 
 
 
-control = box(cfg.game, button_pin=Pin(cfg.control_pin), led_pin=Pin(cfg.control_led), id="Control")
-control.led.off() # type: ignore
+
 
 boxes = []
-for i in range(0, len(cfg.button_pins)): # type: ignore
-    boxes.append(box(cfg.game, button_pin=Pin(cfg.button_pins[i]), led_pin=Pin(cfg.led_pins[i]), id=cfg.ids[i], irq=True))
+
+if cfg.pinout == cfg.p10v1_pins:
+    for i in range(0, len(cfg.led_pins)): # type: ignore
+        mcp.pin(cfg.led_pins[i], mode=0)
+        j = mcp[cfg.led_pins[i]]
+
+        boxes.append(box(cfg.game, button_pin=Pin(cfg.button_pins[i]), led_pin=j, id=cfg.ids[i], irq=True))
+    mcp.pin(cfg.control_led, mode=0)
+    l = mcp[cfg.control_led]
+    control = box(cfg.game, button_pin=Pin(cfg.control_pin), led_pin=l, id="Control")
+    control.led_off() # type: ignore
+
+else:
+    for i in range(0, len(cfg.led_pins)): # type: ignore
+        boxes.append(box(cfg.game, button_pin=Pin(cfg.button_pins[i]), led_pin=Pin(cfg.led_pins[i]), id=cfg.ids[i], irq=True))
+
+    control = box(cfg.game, button_pin=Pin(cfg.control_pin), led_pin=Pin(cfg.control_led), id="Control")
+    control.led.off() # type: ignore
 
 for i in boxes:
-    i.led.off()
+    i.led_off()
 
 #endregion
 
@@ -263,7 +289,7 @@ while True: #setup check
     
     elif control.button.value() == 1:
         cfg.game.lock = False
-        
+        print("Launching")
         break
     
 
@@ -289,6 +315,8 @@ print("Entering main loop")
 
 role = "standalone" # disable UART until further notice
 reset_handler(role)
+cfg.game.lock = False
+cfg.game.flag = False
 
 try:
     while True:
@@ -297,7 +325,7 @@ try:
             cfg.game.flag = False
 
         elif not cfg.game.lock:
-            control.led.on() # type: ignore
+            control.led_on() # type: ignore
             if cfg.game.flag:
                 bundle_handler(role)
 

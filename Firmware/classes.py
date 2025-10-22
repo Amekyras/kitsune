@@ -34,6 +34,7 @@ class box():
         #print(type(self.button))
         if type(self.button) == "VirtualPin":
             self.button.input(pull=0 if pull=="down" else 1)
+            #MCP DOES NOT HAVE PULLDOWN RESISTORS I THINK!!!
         #else:
         #    print("test")
         #    self.button = self.mcp[button_pin].input(pull=1)
@@ -83,14 +84,14 @@ class box():
             if type(self.led) == Pin:
                 self.led.on()
             else:
-                self.led.output(value=1) # type: ignore
+                self.led.output(1) # type: ignore
 
     def led_off(self):
         if self.led is not None:
             if type(self.led) == Pin:
                 self.led.off()
             else:
-                self.led.output(value=0) # type: ignore
+                self.led.output(0) # type: ignore
 
 
 def handle_buzz(arg):

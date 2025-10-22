@@ -39,7 +39,7 @@ p10_pins = {
 
 p10v1_pins = { #pins for kitsune++ v1.0 board - assign switches (read-once) and LEDs (write-only) to MCP23017
     "switch_pins": [11, 12, 13, 14], # MCP pins 
-    "button_pins": [2, 4, 6, 8, 0, 10, 16, 18, 20, 26], 
+    "button_pins": [6, 7, 8, 9, 10, 12, 14, 15, 16, 17], 
     "led_pins": [0, 1, 2, 3, 4, 6, 7, 8, 9, 10], # MCP pins
     "ids": ["A1", "A2", "A3", "A4", "A5", "B5", "B4", "B3", "B2", "B1"],
     "switch_ids": ["switch1", "switch2", "switch3", "switch4"],

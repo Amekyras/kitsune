@@ -114,13 +114,20 @@ if cfg.pinout == cfg.p10v1_pins:
 #while True:
     print(i2c.scan())
     mcp = mcp23017.MCP23017(i2c, 0x20)
-
+    print(type(mcp[cfg.switch_pins[0]]))
+    k = mcp[cfg.switch_pins[0]]
+    print(type(k))
     for i in range(0, len(cfg.switch_pins)):
-        switches.append(box(cfg.game, button_pin=cfg.switch_pins[i], id=cfg.switch_ids[i], pull="up", mcp=mcp))
+        j = mcp[cfg.switch_pins[i]]
+        print(type(j))
+        switches.append(box(cfg.game, button_pin=j, id=cfg.switch_ids[i], pull="up"))
 else:
     for i in range(0, len(cfg.switch_pins)):
-        switches.append(box(cfg.game, button_pin=cfg.switch_pins[i], id=cfg.switch_ids[i], pull="up"))
+        j = Pin(cfg.switch_pins[i], Pin.IN, Pin.PULL_UP)
+        switches.append(box(cfg.game, button_pin=j, id=cfg.switch_ids[i], pull="up"))
 
+print (switches[0])
+print (type(switches[0].button))
 if not switches[0].button.value():
     config.debug = True
     cfg.game.debug = True
@@ -159,12 +166,12 @@ def prompt_toggle(t):
 
 
 
-control = box(cfg.game, cfg.control_pin, led_pin=cfg.control_led, id="Control")
+control = box(cfg.game, button_pin=Pin(cfg.control_pin), led_pin=Pin(cfg.control_led), id="Control")
 control.led.off() # type: ignore
 
 boxes = []
 for i in range(0, len(cfg.button_pins)): # type: ignore
-    boxes.append(box(cfg.game, button_pin=cfg.button_pins[i], led_pin=cfg.led_pins[i], id=cfg.ids[i], irq=True))
+    boxes.append(box(cfg.game, button_pin=Pin(cfg.button_pins[i]), led_pin=Pin(cfg.led_pins[i]), id=cfg.ids[i], irq=True))
 
 for i in boxes:
     i.led.off()
@@ -243,11 +250,11 @@ while True: #setup check
                 if i.button.value() == 1:
                     high.append(i.id)
                     if i.led is not None:
-                        i.led.on()
+                        i.led_on()
                 else:
                     low.append(i.id)
                     if i.led is not None:
-                        i.led.off()
+                        i.led_off()
             print(f"High = {high}, Low = {low}", end="\r")
             #print("cycle")
 
@@ -261,7 +268,7 @@ while True: #setup check
 
     else:
         for i in boxes:
-            i.led.on()
+            i.led_on()
         
     #elif config.role == 'branch':
     #    break

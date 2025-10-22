@@ -16,26 +16,42 @@ import mcp23017
 
 class box():
     """All inputs use this class, pass led_pin ID to add output"""
-    def __init__(self, game_state, button_pin, handler=None, led_pin=None, id="", pull="down", irq=False, mcp=None):
-        if not mcp:
-            if pull == "up":
-                self.button = Pin(button_pin, Pin.IN, Pin.PULL_UP)
-            else:
-                self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
-        else:
-            self.button = mcp[button_pin].input(pull=1)
-            #self.button = mcp[button_pin]
+    def __init__(self, game_state, button_pin, handler=None, led_pin=None, id="", pull="down", irq=False):
+        #if mcp is not None:
+        #    self.led_virtual = True
+        #    self.mcp = mcp
+        
+
+        #if mcp_button is not None:
+        #    self.button = mcp_button
+
+        #if not mcp:
+        #if pull == "up":
+        #    self.button = Pin(button_pin, Pin.IN, Pin.PULL_UP)
+        #else:
+        #    self.button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
+        self.button = button_pin
+        #print(type(self.button))
+        if type(self.button) == "VirtualPin":
+            self.button.input(pull=0 if pull=="down" else 1)
+        #else:
+        #    print("test")
+        #    self.button = self.mcp[button_pin].input(pull=1)
+        #    #self.button = mcp[button_pin]
+        
         if irq and not cfg.game.debug:
             self.button.irq(handler=self.handle_press,trigger=Pin.IRQ_RISING)
 
-        if mcp is not None:
-            self.led_virtual = True
-            self.mcp = mcp
 
-        if led_pin is not None and mcp is None:
-            self.led = Pin(led_pin, Pin.OUT)
-        elif led_pin is not None and mcp is not None:
-            self.led = mcp.pin(led_pin, mode=0)
+        #if led_pin is not None and mcp is None:
+        #    self.led = Pin(led_pin, Pin.OUT)
+        #elif led_pin is not None and mcp is not None:
+        #    self.led = mcp_led
+        #    self.led
+        if led_pin is not None:
+            self.led = led_pin
+        if type(self.led) == "VirtualPin":
+            self.led.output() #type: ignore
         else:
             self.led = None
         
@@ -64,14 +80,14 @@ class box():
 
     def led_on(self):
         if self.led is not None:
-            if not self.led_virtual:
+            if type(self.led) == Pin:
                 self.led.on()
             else:
                 self.led.output(value=1) # type: ignore
 
     def led_off(self):
         if self.led is not None:
-            if not self.led_virtual:
+            if type(self.led) == Pin:
                 self.led.off()
             else:
                 self.led.output(value=0) # type: ignore
@@ -127,3 +143,7 @@ def buzz(speaker, config):
 
         speaker.duty_u16(0)
     return()
+
+
+
+

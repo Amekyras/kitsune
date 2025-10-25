@@ -168,14 +168,18 @@ def status_toggle(t):
     status_led.toggle()
     #print(f" Locked: {cfg.game.lock}, Flag: {cfg.game.flag}, Active: {cfg.game.active}")
 
+
+prompt = True
 def prompt_toggle(t):
+    global prompt
     #control.led.toggle() # type: ignore
 
-    if control.led():
+    if not prompt:
         control.led_off() # type: ignore
+        prompt = True
     else:
         control.led_on() # type: ignore
-
+        prompt = False
 
 
 

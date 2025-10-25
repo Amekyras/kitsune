@@ -6,8 +6,8 @@ downstream = UART(0)
 upstream = UART(1)
 
 
-downstream.init(parity=None, stop=2, tx=4, rx=5, txbuf=32, rxbuf=32)
-upstream.init(parity=None, stop=2, tx=0, rx=1, txbuf=32, rxbuf=32)
+upstream.init(parity=None, stop=2, tx=4, rx=5, txbuf=32, rxbuf=32)
+downstream.init(parity=None, stop=2, tx=0, rx=1, txbuf=32, rxbuf=32)
 
 while True:
     if upstream.any():

@@ -13,6 +13,8 @@ pixel_pin = 23
 #tx_pin = 0
 #rx_pin = 1
 
+firmware_version = "3.0.0-alpha"
+
 
 
 p8_pins = {
@@ -24,6 +26,7 @@ p8_pins = {
     "buzzer_pin": 13,
     "control_led": 15,
     "control_pin": 14,
+    "name": "v0.2/v0.3"
 }
 
 p10_pins = {
@@ -35,6 +38,7 @@ p10_pins = {
     "buzzer_pin": 13,
     "control_led": 15,
     "control_pin": 14,
+    "name": "++ v0.1"
 }
 
 p10v1_pins = { #pins for kitsune++ v1.0 board - assign switches (read-once) and LEDs (write-only) to MCP23017
@@ -46,6 +50,7 @@ p10v1_pins = { #pins for kitsune++ v1.0 board - assign switches (read-once) and 
     "buzzer_pin": 13,
     "control_led": 5,
     "control_pin": 11,
+    "name": "v1.0++"
 }
 
 

@@ -7,8 +7,14 @@ import rp2
 import machine
 from machine import Pin, I2C
 import mcp23017
+import os
+
 
 micropython.alloc_emergency_exception_buf(100)
+
+print(os.uname())
+print(f"Firmware version: {cfg.firmware_version}")
+print(f"Pinout: {cfg.pinout["name"]}")
 
 config = cfg.runtime_config(volume=cfg.volume, freqmod=cfg.freqmod)
 #global buzz_timer
@@ -172,8 +178,8 @@ def status_toggle(t):
 prompt = True
 def prompt_toggle(t):
     global prompt
+    #TODO: there's a bug here that makes the LED stay on sometimes
     #control.led.toggle() # type: ignore
-
     if not prompt:
         control.led_off() # type: ignore
         prompt = True

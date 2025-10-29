@@ -317,16 +317,11 @@ status_timer.init(period=1000, callback=status_toggle)
 
 print("Entering main loop")
 
-#cfg.game.flag = False
-#cfg.game.lock = False
-
-#for i in boxes:
-#            i.led.off()
-
 role = "standalone" # disable UART until further notice
 reset_handler(role)
 cfg.game.lock = False
 cfg.game.flag = False
+
 
 try:
     while True:

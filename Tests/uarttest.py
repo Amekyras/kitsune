@@ -18,4 +18,4 @@ while True:
         downstream_data = downstream.read()
         print(f"Downstream data: {downstream_data}")
         downstream.write(b'Hello from upstream!\n')
-    utime.sleep(1000)
+    utime.sleep(1)

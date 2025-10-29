@@ -48,7 +48,7 @@ p10v1_pins = { #pins for kitsune++ v1.0 board - assign switches (read-once) and 
     "ids": ["A1", "A2", "A3", "A4", "A5", "B5", "B4", "B3", "B2", "B1"],
     "switch_ids": ["switch1", "switch2", "switch3", "switch4"],
     "buzzer_pin": 13,
-    "control_led": 5,
+    "control_led": 5, #mcp
     "control_pin": 11,
     "name": "v1.0++"
 }

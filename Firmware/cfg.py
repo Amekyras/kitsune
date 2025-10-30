@@ -76,6 +76,7 @@ class runtime_config:
         self.role = role
         self.volume = round(volume * 65535 / 100)  # Convert percentage to duty cycle
         self.freqmod = freqmod  # Frequency modulation factor
+        self.chain_pos = 0  # Position in chain for multi-unit setups
 
         if self.volume > 0:
             self.mute = False

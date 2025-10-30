@@ -8,7 +8,7 @@ import machine
 from machine import Pin, I2C
 import mcp23017
 import os
-
+import utime
 
 micropython.alloc_emergency_exception_buf(100)
 
@@ -215,7 +215,17 @@ for i in boxes:
 
 #endregion
 
+#region uart setup
+if cfg.pinout["name"] == "++ v0.1":
+    downstream = UART(0)
+    upstream = UART(1)
 
+    upstream.init(parity=None, stop=2, tx=4, rx=5, txbuf=32, rxbuf=32)
+    downstream.init(parity=None, stop=2, tx=0, rx=1, txbuf=32, rxbuf=32)
+
+
+
+#endregion
 
 
 
@@ -295,17 +305,41 @@ while True: #setup check
             print(f"High = {high}, Low = {low}", end="\r")
             #print("cycle")
 
+    # do uart startup
+    if cfg.pinout["name"] == "++ v0.1":
+        #while True:
+
+        upstream.write("Hello from downstream!")
+        downstream.write("Hello from upstream!")
+        utime.sleep(0.1)
+    
+        if upstream.any():
+            has_upstream = True
+            upstream_data = upstream.read()
+            print(f"Upstream data: {upstream_data}")
+            # control box no longer does anything
+            # setup interrupts
+            prompt_flash.deinit()
+            status_led.on()
+            print("Connected to upstream")
+
+        if downstream.any():
+            has_downstream = True
+            downstream_data = downstream.read()
+            print(f"Downstream data: {downstream_data}")
+            # setup interrupts
             
     
-    elif control.button.value() == 1:
+    if not has_upstream and control.button.value() == 1:
+        
+
         cfg.game.lock = False
         print("Launching")
         break
     
 
-    else:
-        for i in boxes:
-            i.led_on()
+    for i in boxes:
+        i.led_on()
         
     #elif config.role == 'branch':
     #    break

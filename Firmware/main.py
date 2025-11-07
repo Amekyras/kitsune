@@ -5,7 +5,7 @@ from neopixel import NeoPixel
 from buzzer_music import music
 import rp2
 import machine
-from machine import Pin, I2C
+from machine import Pin, I2C, UART
 import mcp23017
 import os
 import utime
@@ -107,8 +107,33 @@ def reset_handler(mode):
 def autoresetter(t):
     reset_handler(role)
 
+def upstream_receive(t):
+    micropython.schedule(chain_handle, t)
 
+def downstream_receive(t):
+    micropython.schedule(chain_handle, t)
 
+def chain_handle(t):
+    if t == upstream:
+        data = upstream.read()
+        print(f"Upstream data: {data}")
+        if "ACK" in data.decode('utf-8') and cfg.game.active is not None:
+            print("ACK received from upstream")
+            bundle_handler("chain")
+        elif "ACK" in data.decode('utf-8') and cfg.game.active is None:
+            print("ACK received from upstream with no active box")
+            downstream.write("ACK")
+        if "RESET" in data.decode('utf-8'):
+            downstream.write("RESET")
+            reset_handler("chain")
+            
+    elif t == downstream:
+        data = downstream.read()
+        print(f"Downstream data: {data}")
+        if "FLAG" in data.decode('utf-8'):
+            cfg.game.lock = True
+            print("Flag received from downstream")
+            downstream.write(f"ACK {data[4]}")
 
 #endregion
 
@@ -274,6 +299,8 @@ print("Entering setup loop")
 
 prompt_flash.init(period=1000, mode=Timer.PERIODIC, callback=prompt_toggle) # type: ignore
 
+has_upstream = False
+has_downstream = False 
 while True: #setup check
     
 
@@ -322,11 +349,13 @@ while True: #setup check
             prompt_flash.deinit()
             status_led.on()
             print("Connected to upstream")
+            upstream.irq(handler=upstream_receive, trigger=UART.RX_IDLE)
 
         if downstream.any():
             has_downstream = True
             downstream_data = downstream.read()
             print(f"Downstream data: {downstream_data}")
+            downstream.irq(handler=downstream_receive, trigger=UART.RX_IDLE)
             # setup interrupts
             
     
@@ -351,27 +380,61 @@ status_timer.init(period=1000, callback=status_toggle)
 
 print("Entering main loop")
 
-role = "standalone" # disable UART until further notice
+if not has_upstream and not has_downstream:
+    role = "standalone" # disable UART until further notice
+elif has_downstream and not has_upstream:
+    role = "head"
+else:
+    role = "chain"
 reset_handler(role)
 cfg.game.lock = False
 cfg.game.flag = False
 
+if role == "standalone":
+    try:
+        while True:
+            if refractory and (cfg.game.lock or cfg.game.flag):
+                cfg.game.lock = False
+                cfg.game.flag = False
 
-try:
+            elif not cfg.game.lock:
+                control.led_on() # type: ignore
+                if cfg.game.flag:
+                    bundle_handler(role)
+
+            elif control.button.value() == 1: #query control box rather than resetting on interrupt
+                reset_handler(role)
+    except Exception as e:
+        print("Fatal error, resetting")
+elif role == "head":
+    downstream.write("RESET")
     while True:
         if refractory and (cfg.game.lock or cfg.game.flag):
             cfg.game.lock = False
             cfg.game.flag = False
 
+        
+
         elif not cfg.game.lock:
+            if downstream.any():
+                data = downstream.read()
+                if "FLAG" in data.decode('utf-8'):
+                    cfg.game.flag = True
+                    cfg.game.lock = True
+                    print("Flag received from downstream")
+                    downstream.write(f"ACK {data[4]}")
+
             control.led_on() # type: ignore
             if cfg.game.flag:
                 bundle_handler(role)
 
-        elif control.button.value() == 1: #query control box rather than resetting on interrupt
+
+        elif control.button.value() == 1:
+            #query control box rather than resetting on interrupt
             reset_handler(role)
-except Exception as e:
-    print("Fatal error, resetting")
+
+else:
+    pass
 
 machine.reset()
 

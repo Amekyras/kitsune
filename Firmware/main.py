@@ -115,25 +115,27 @@ def downstream_receive(t):
 
 def chain_handle(t):
     if t == upstream:
-        data = upstream.read()
-        print(f"Upstream data: {data}")
-        if "ACK" in data.decode('utf-8') and cfg.game.active is not None:
-            print("ACK received from upstream")
-            bundle_handler("chain")
-        elif "ACK" in data.decode('utf-8') and cfg.game.active is None:
-            print("ACK received from upstream with no active box")
-            downstream.write("ACK")
-        if "RESET" in data.decode('utf-8'):
-            downstream.write("RESET")
-            reset_handler("chain")
+        if upstream.any():
+            data = upstream.read()
+            print(f"Upstream data: {data}")
+            if "ACK" in data.decode('utf-8') and cfg.game.active is not None:
+                print("ACK received from upstream")
+                bundle_handler("chain")
+            elif "ACK" in data.decode('utf-8') and cfg.game.active is None:
+                print("ACK received from upstream with no active box")
+                downstream.write("ACK")
+            if "RESET" in data.decode('utf-8'):
+                downstream.write("RESET")
+                reset_handler("chain")
             
     elif t == downstream:
-        data = downstream.read()
-        print(f"Downstream data: {data}")
-        if "FLAG" in data.decode('utf-8'):
-            cfg.game.lock = True
-            print("Flag received from downstream")
-            downstream.write(f"ACK {data[4]}")
+        if downstream.any():
+            data = downstream.read()
+            print(f"Downstream data: {data}")
+            if "FLAG" in data.decode('utf-8'):
+                cfg.game.lock = True
+                print("Flag received from downstream")
+                downstream.write(f"ACK {data[4]}")
 
 #endregion
 
@@ -389,6 +391,8 @@ else:
 reset_handler(role)
 cfg.game.lock = False
 cfg.game.flag = False
+
+role = "standalone" # TEMP OVERRIDE FOR TESTING WITHOUT UART
 
 if role == "standalone":
     try:

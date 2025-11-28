@@ -243,7 +243,7 @@ for i in boxes:
 #endregion
 
 #region uart setup
-if cfg.pinout["name"] == "++ v0.1":
+if cfg.pinout["name"] == "v1.0++":
     downstream = UART(0)
     upstream = UART(1)
 

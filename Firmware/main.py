@@ -335,7 +335,7 @@ while True: #setup check
             #print("cycle")
 
     # do uart startup
-    if cfg.pinout["name"] == "++ v0.1":
+    if cfg.pinout["name"] == "v1.0++":
         #while True:
 
         upstream.write("Hello from downstream!")

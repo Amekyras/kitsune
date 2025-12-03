@@ -71,8 +71,10 @@ def bundle_handler(mode):
     else:
         pixel.fill(cfg.def_colour)
     pixel.write()
-    buzz(speaker=buzzer, config=config)
-
+    try:
+        buzz(speaker=buzzer, config=config)
+    except Exception as e:
+        print(f"Error during buzz: {e}")
     if config.autoreset:
         reset_timer.init(mode=Timer.ONE_SHOT, period=cfg.reset_duration, callback=autoresetter)
 

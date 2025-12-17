@@ -1,9 +1,13 @@
 # pinouts and the like
 
 #import utime
-#import micropython
-#import machine
-from user_cfg import *
+import micropython
+import machine
+from machine import Pin, I2C, UART, PWM
+#from collections.abc import Callable, Awaitable
+
+
+import user_cfg
 
 #buzzer_pin = 13
 status_pin = 25
@@ -69,14 +73,23 @@ control_pin = pinout["control_pin"]
 
 
 class runtime_config:
-    def __init__(self, debug=False, test_speaker=False, autoreset=False, role="standalone", volume=100.0, freqmod=100.0):
+    """
+    Runtime configuration for the firmware.
+
+    Contains DIP switch values (must be read at startup), multibox settings, and buzzer settings.
+
+    Read at runtime and not expected to be changed once play begins.
+    """
+    def __init__(self, debug=False, test_speaker=False, autoreset=False, role="standalone", volume=user_cfg.volume, freqmod=user_cfg.freqmod, buzzer=None):
         self.debug = debug
         self.test_speaker = test_speaker
         self.autoreset = autoreset
         self.role = role
-        self.volume = round(volume * 65535 / 100)  # Convert percentage to duty cycle
+        self.volume = round((volume * 65535) / 100)  # Convert percentage to duty cycle
         self.freqmod = freqmod  # Frequency modulation factor
         self.chain_pos = 0  # Position in chain for multi-unit setups
+        self.buzzer = PWM(Pin(buzzer_pin), freq=2500, duty_u16=0)
+
 
         if self.volume > 0:
             self.mute = False
@@ -84,6 +97,9 @@ class runtime_config:
             self.mute = True
 
 class game_state:
+    """
+    Contains current game state - locked/unlocked, buzz flag, active box.
+    """
     def __init__(self, lock=False, flag=False, active=None):
         self.lock = lock
         self.flag = flag

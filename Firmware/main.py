@@ -1,23 +1,30 @@
-import cfg
+import hardware_cfg
+import user_cfg
 from functions import *
 from classes import * # type: ignore
 from neopixel import NeoPixel
 from buzzer_music import music
 import rp2
+import micropython
 import machine
-from machine import Pin, I2C, UART
+from machine import Pin, I2C, UART, PWM
 import mcp23017
 import os
 import utime
 
+
 micropython.alloc_emergency_exception_buf(100)
 
 print(os.uname())
-print(f"Firmware version: {cfg.firmware_version}")
-print(f"Pinout: {cfg.pinout["name"]}")
+print(f"Firmware version: {hardware_cfg.firmware_version}")
+print(f"Pinout: {hardware_cfg.pinout["name"]}")
 
-config = cfg.runtime_config(volume=cfg.volume, freqmod=cfg.freqmod)
-#global buzz_timer
+cfg = hardware_cfg.runtime_config()
+# cfg is the global configuration object. this is an anti-pattern but it's late and I'm tired.
+
+#hardware_cfg.game = hardware_cfg.game_state()
+
+
 
 #region vars
 refractory_timer = Timer(-1) #prevents buzzes immediately after reset (200ms)
@@ -40,7 +47,7 @@ def reset_refractory(t):
 
 def flash_pixel():
     r, g, b = pixel[0] # type: ignore
-    if cfg.game.lock:
+    if hardware_cfg.game.lock:
         if r == 0:
             pixel.fill((217, 121, 232))
         else:
@@ -56,27 +63,28 @@ def flash_pixel():
 def bundle_handler(mode):
     print("Bundle called")
     # respond to raised flag
-    status_timer.deinit()
+    #status_timer.deinit()
 
-    cfg.game.lock = True
-    cfg.game.flag = False
+    hardware_cfg.game.lock = True
+    hardware_cfg.game.flag = False
 
     control.led_off() # type: ignore
-    cfg.game.active.led_on() # type: ignore
+    hardware_cfg.game.active.led_on() # type: ignore
 
-    if cfg.game.active.id[0] == "A": # type:ignore
-        pixel.fill(cfg.teama_colour)
-    elif cfg.game.active.id[0] == "B": # type:ignore
-        pixel.fill(cfg.teamb_colour)
+    if hardware_cfg.game.active.id[0] == "A": # type:ignore
+        pixel.fill(user_cfg.teama_colour)
+    elif hardware_cfg.game.active.id[0] == "B": # type:ignore
+        pixel.fill(user_cfg.teamb_colour)
     else:
-        pixel.fill(cfg.def_colour)
+        pixel.fill(user_cfg.def_colour)
     pixel.write()
     try:
-        buzz(speaker=buzzer, config=config)
+        micropython.schedule(buzz, cfg)
     except Exception as e:
         print(f"Error during buzz: {e}")
-    if config.autoreset:
-        reset_timer.init(mode=Timer.ONE_SHOT, period=cfg.reset_duration, callback=autoresetter)
+    cfg.buzzer.duty_u16(0)
+    if cfg.autoreset:
+        reset_timer.init(mode=Timer.ONE_SHOT, period=user_cfg.reset_duration, callback=autoresetter)
 
 
 def reset_handler(mode):
@@ -91,18 +99,18 @@ def reset_handler(mode):
 
     print("Resetting pixel")
 
-    pixel.fill((0, 0, 0))
+    pixel.fill(user_cfg.armed_colour)
     pixel.write()
 
     print("Resetting timers")
 
     refractory_timer.init(period=200, mode=Timer.ONE_SHOT, callback=reset_refractory)
-    status_timer.init(period=1000, callback=status_toggle)
+    #status_timer.init(period=1000, callback=status_toggle)
 
     print("Resetting game state")
 
-    cfg.game.flag = False
-    cfg.game.lock = False
+    hardware_cfg.game.flag = False
+    hardware_cfg.game.lock = False
 
 
 
@@ -120,10 +128,10 @@ def chain_handle(t):
         if upstream.any():
             data = upstream.read()
             print(f"Upstream data: {data}")
-            if "ACK" in data.decode('utf-8') and cfg.game.active is not None:
+            if "ACK" in data.decode('utf-8') and hardware_cfg.game.active is not None:
                 print("ACK received from upstream")
                 bundle_handler("chain")
-            elif "ACK" in data.decode('utf-8') and cfg.game.active is None:
+            elif "ACK" in data.decode('utf-8') and hardware_cfg.game.active is None:
                 print("ACK received from upstream with no active box")
                 downstream.write("ACK")
             if "RESET" in data.decode('utf-8'):
@@ -135,7 +143,7 @@ def chain_handle(t):
             data = downstream.read()
             print(f"Downstream data: {data}")
             if "FLAG" in data.decode('utf-8'):
-                cfg.game.lock = True
+                hardware_cfg.game.lock = True
                 print("Flag received from downstream")
                 downstream.write(f"ACK {data[4]}")
 
@@ -152,56 +160,61 @@ def chain_handle(t):
 switches = []
 
 
-if cfg.pinout == cfg.p10v1_pins:
+if hardware_cfg.pinout["name"] == "v1.0++":
     i2c = I2C(scl=Pin(21), sda=Pin(20))
     print(i2c.scan())
     mcp = mcp23017.MCP23017(i2c, 0x20)
 
-    for i in range(0, len(cfg.switch_pins)):
-        mcp.pin(cfg.switch_pins[i], mode=1, pullup=True)
-        j = mcp[cfg.switch_pins[i]]
+    for i in range(0, len(hardware_cfg.switch_pins)):
+        mcp.pin(hardware_cfg.switch_pins[i], mode=1, pullup=True)
+        j = mcp[hardware_cfg.switch_pins[i]]
         #print(type(j))
-        switches.append(box(cfg.game, button_pin=j, id=cfg.switch_ids[i], pull="up"))
+        switches.append(box(hardware_cfg.game, button_pin=j, id=hardware_cfg.switch_ids[i], pull="up"))
 else:
-    for i in range(0, len(cfg.switch_pins)):
-        j = Pin(cfg.switch_pins[i], Pin.IN, Pin.PULL_UP)
-        switches.append(box(cfg.game, button_pin=j, id=cfg.switch_ids[i], pull="up"))
+    for i in range(0, len(hardware_cfg.switch_pins)):
+        j = Pin(hardware_cfg.switch_pins[i], Pin.IN, Pin.PULL_UP)
+        switches.append(box(hardware_cfg.game, button_pin=j, id=hardware_cfg.switch_ids[i], pull="up"))
 
 print (switches[0])
 print (switches[0].button.value())
 if not switches[0].button.value():
     print("Debug mode")
-    config.debug = True
-    cfg.game.debug = True
+    #cfg.debug = True
+    hardware_cfg.game.debug = True
 
 if not switches[1].button.value():
-    config.volume = 0
+    cfg.volume = 0
     print("Muted")
 else: 
-    config.volume = 62500
+    cfg.volume = user_cfg.volume
 
 if not switches[2].button.value():
-    config.test_speaker = True
+    cfg.test_speaker = True
 
 if not switches[3].button.value():
-    config.autoreset = True
+    cfg.autoreset = True
     print("Autoreset enabled")
 else: 
-    config.autoreset = False
-    
+    cfg.autoreset = False
+
 #endregion
 
 #region setup hardware
-buzzer = PWM(Pin(cfg.buzzer_pin), freq=2500, duty_u16=0)
 
-status_led = Pin(cfg.status_pin, Pin.OUT)
+status_led = Pin(hardware_cfg.status_pin, Pin.OUT)
 status_led.off()
 
 #buzz_timer = utime.ticks_ms()
 
+last_msg = ""
+
 def status_toggle(t):
     status_led.toggle()
-    #print(f" Locked: {cfg.game.lock}, Flag: {cfg.game.flag}, Active: {cfg.game.active}")
+    global last_msg
+    msg = f" Lock: {hardware_cfg.game.lock}, Flag: {hardware_cfg.game.flag}, Active: {hardware_cfg.game.active}"
+    if msg != last_msg:
+        last_msg = msg
+        print(msg)
 
 
 prompt = True
@@ -221,22 +234,22 @@ def prompt_toggle(t):
 
 boxes = []
 
-if cfg.pinout == cfg.p10v1_pins:
-    for i in range(0, len(cfg.led_pins)): # type: ignore
-        mcp.pin(cfg.led_pins[i], mode=0)
-        j = mcp[cfg.led_pins[i]]
+if hardware_cfg.pinout == hardware_cfg.p10v1_pins:
+    for i in range(0, len(hardware_cfg.led_pins)): # type: ignore
+        mcp.pin(hardware_cfg.led_pins[i], mode=0)
+        j = mcp[hardware_cfg.led_pins[i]]
 
-        boxes.append(box(cfg.game, button_pin=Pin(cfg.button_pins[i]), led_pin=j, id=cfg.ids[i], irq=True))
-    mcp.pin(cfg.control_led, mode=0)
-    l = mcp[cfg.control_led]
-    control = box(cfg.game, button_pin=Pin(cfg.control_pin), led_pin=l, id="Control")
+        boxes.append(box(hardware_cfg.game, button_pin=Pin(hardware_cfg.button_pins[i]), led_pin=j, id=hardware_cfg.ids[i], irq=True))
+    mcp.pin(hardware_cfg.control_led, mode=0)
+    l = mcp[hardware_cfg.control_led]
+    control = box(hardware_cfg.game, button_pin=Pin(hardware_cfg.control_pin), led_pin=l, id="Control")
     control.led_off() # type: ignore
 
 else:
-    for i in range(0, len(cfg.led_pins)): # type: ignore
-        boxes.append(box(cfg.game, button_pin=Pin(cfg.button_pins[i]), led_pin=Pin(cfg.led_pins[i]), id=cfg.ids[i], irq=True))
+    for i in range(0, len(hardware_cfg.led_pins)): # type: ignore
+        boxes.append(box(hardware_cfg.game, button_pin=Pin(hardware_cfg.button_pins[i]), led_pin=Pin(hardware_cfg.led_pins[i]), id=hardware_cfg.ids[i], irq=True))
 
-    control = box(cfg.game, button_pin=Pin(cfg.control_pin), led_pin=Pin(cfg.control_led), id="Control")
+    control = box(hardware_cfg.game, button_pin=Pin(hardware_cfg.control_pin), led_pin=Pin(hardware_cfg.control_led), id="Control")
     control.led.off() # type: ignore
 
 for i in boxes:
@@ -245,7 +258,7 @@ for i in boxes:
 #endregion
 
 #region uart setup
-if cfg.pinout["name"] == "v1.0++":
+if hardware_cfg.pinout["name"] == "v1.0++":
     downstream = UART(0)
     upstream = UART(1)
 
@@ -259,7 +272,7 @@ if cfg.pinout["name"] == "v1.0++":
 
 
 #initialise neopixel after mute check
-pixel = NeoPixel(Pin(cfg.pixel_pin), 1)
+pixel = NeoPixel(Pin(hardware_cfg.pixel_pin), 1)
 pixel.fill((0, 0, 0))
 pixel.write()
 
@@ -278,7 +291,7 @@ def egg(songfile):
         utime.sleep(0.04)
 
 
-if config.test_speaker and not config.mute:
+if cfg.test_speaker and not cfg.mute:
     print("Testing speaker")
     #egg(song)
 ### END EGG ###
@@ -287,14 +300,14 @@ if config.test_speaker and not config.mute:
 #region startup sound
 jingletrack = "0 G5 1 15 0.5039370059967041;1 F#5 1 15 0.5039370059967041;3 E5 3 15 0.5039370059967041;6 F#5 2 15 0.5039370059967041"
 jingle = music(jingletrack, pin=Pin(13), looping=False)
-if not config.mute:
+if not cfg.mute:
     while True:
         jingle.tick()
         utime.sleep(0.04)
         if jingle.stopped:
-            buzzer.duty_u16(0)
+            cfg.buzzer.duty_u16(0)
             break
-buzzer.duty_u16(0) #kill buzzer
+cfg.buzzer.duty_u16(0) #kill buzzer
 
 #endregion
 
@@ -337,7 +350,7 @@ while True: #setup check
             #print("cycle")
 
     # do uart startup
-    if cfg.pinout["name"] == "v1.0++":
+    if hardware_cfg.pinout["name"] == "v1.0++":
         #while True:
 
         upstream.write("Hello from downstream!")
@@ -366,7 +379,7 @@ while True: #setup check
     if not has_upstream and control.button.value() == 1:
         
 
-        cfg.game.lock = False
+        hardware_cfg.game.lock = False
         print("Launching")
         break
     
@@ -391,47 +404,53 @@ elif has_downstream and not has_upstream:
 else:
     role = "chain"
 reset_handler(role)
-cfg.game.lock = False
-cfg.game.flag = False
+hardware_cfg.game.lock = False
+hardware_cfg.game.flag = False
 
 role = "standalone" # TEMP OVERRIDE FOR TESTING WITHOUT UART
 
 if role == "standalone":
+    upstream.deinit()
+    downstream.deinit()
     try:
         while True:
-            if refractory and (cfg.game.lock or cfg.game.flag):
-                cfg.game.lock = False
-                cfg.game.flag = False
+            try:
+                if refractory and (hardware_cfg.game.lock or hardware_cfg.game.flag):
+                    hardware_cfg.game.lock = False
+                    hardware_cfg.game.flag = False
 
-            elif not cfg.game.lock:
-                control.led_on() # type: ignore
-                if cfg.game.flag:
-                    bundle_handler(role)
+                elif not hardware_cfg.game.lock:
+                    control.led_on() # type: ignore
+                    if hardware_cfg.game.flag:
+                        bundle_handler(role)
 
-            elif control.button.value() == 1: #query control box rather than resetting on interrupt
-                reset_handler(role)
+                elif control.button.value() == 1: #query control box rather than resetting on interrupt
+                    reset_handler(role)
+            except Exception as e:
+                print(f"Error in main loop: {e}")
+                pass
     except Exception as e:
         print("Fatal error, resetting")
+
+
 elif role == "head":
     downstream.write("RESET")
     while True:
-        if refractory and (cfg.game.lock or cfg.game.flag):
-            cfg.game.lock = False
-            cfg.game.flag = False
+        if refractory and (hardware_cfg.game.lock or hardware_cfg.game.flag):
+            hardware_cfg.game.lock = False
+            hardware_cfg.game.flag = False
 
-        
-
-        elif not cfg.game.lock:
+        elif not hardware_cfg.game.lock:
             if downstream.any():
                 data = downstream.read()
                 if "FLAG" in data.decode('utf-8'):
-                    cfg.game.flag = True
-                    cfg.game.lock = True
+                    hardware_cfg.game.flag = True
+                    hardware_cfg.game.lock = True
                     print("Flag received from downstream")
                     downstream.write(f"ACK {data[4]}")
 
             control.led_on() # type: ignore
-            if cfg.game.flag:
+            if hardware_cfg.game.flag:
                 bundle_handler(role)
 
 

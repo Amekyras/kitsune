@@ -1,7 +1,8 @@
 import micropython
 import utime
 from machine import *
-import cfg
+import hardware_cfg
+import user_cfg
 import mcp23017
 #from functions import handle_buzz
 
@@ -39,8 +40,8 @@ class box():
         #    print("test")
         #    self.button = self.mcp[button_pin].input(pull=1)
         #    #self.button = mcp[button_pin]
-        
-        if irq and not cfg.game.debug:
+
+        if irq and not hardware_cfg.game.debug:
             self.button.irq(handler=self.handle_press,trigger=Pin.IRQ_RISING)
 
 
@@ -61,7 +62,7 @@ class box():
 
         self.handler = handle_buzz
         
-        #self.game_state = game_state
+        #self.game = game_state
         #self.lock = game_state.lock
         #self.flag = game_state.flag
         #self.active = game_state.active
@@ -70,7 +71,7 @@ class box():
 
     def handle_press(self, c):
         state = disable_irq()
-        if not cfg.game.lock:
+        if not hardware_cfg.game.lock:
             micropython.schedule(self.handler, self)
             print(f"buzz from {self.id}")
         else:
@@ -95,19 +96,32 @@ class box():
 
 
 def handle_buzz(arg):
+    """
+    Handle a buzz event from a box.
 
- 
-    #cfg.game.lock = True
-    cfg.game.flag = True
-    cfg.game.active = arg
+    Args:
+        arg (box): The box that triggered the buzz.
+    """
+    #hardware_cfg.game.lock = True
+    hardware_cfg.game.flag = True
+    hardware_cfg.game.active = arg
 
     #print(f"Successful buzz from {arg.id}")
 
-def buzz(speaker, config):
+def buzz(config):
+    """
+    Buzz the speaker with the given configuration.
+
+    Args:
+        config (runtime_config): The runtime configuration object.
+    """
+    speaker = config.buzzer
     #speaker.duty_u16(50000)
     volume = round(config.volume)
     freqmod = (config.freqmod/100)
+    print(f"Buzzing at volume {volume} and freqmod {freqmod}")
     if not config.mute:
+        print("Start buzz")
         speaker.duty_u16(volume)
         speaker.freq(round(900*freqmod))
 
@@ -143,6 +157,7 @@ def buzz(speaker, config):
         utime.sleep_ms(125)
 
         speaker.duty_u16(0)
+        print("End buzz")
     return()
 
 

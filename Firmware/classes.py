@@ -3,9 +3,8 @@ import utime
 from machine import *
 import hardware_cfg
 import user_cfg
-import mcp23017
+import lib.mcp23017 as mcp23017
 #from functions import handle_buzz
-
 
 
 

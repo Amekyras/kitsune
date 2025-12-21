@@ -1,14 +1,13 @@
 import hardware_cfg
 import user_cfg
-from functions import *
 from classes import * # type: ignore
 from neopixel import NeoPixel
-from buzzer_music import music
+from lib.buzzer_music import music
 import rp2
 import micropython
 import machine
 from machine import Pin, I2C, UART, PWM
-import mcp23017
+import lib.mcp23017 as mcp23017
 import os
 import utime
 

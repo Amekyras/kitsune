@@ -79,6 +79,7 @@ def bundle_handler(mode):
         pixel.fill(user_cfg.def_colour)
     pixel.write()
     try:
+        print(cfg.volume)
         micropython.schedule(buzz, cfg)
     except Exception as e:
         print(f"Error during buzz: {e}")
@@ -185,8 +186,6 @@ if not switches[0].button.value():
 if not switches[1].button.value():
     cfg.volume = 0
     print("Muted")
-else: 
-    cfg.volume = user_cfg.volume
 
 if not switches[2].button.value():
     cfg.test_speaker = True
@@ -410,8 +409,8 @@ hardware_cfg.game.flag = False
 role = "standalone" # TEMP OVERRIDE FOR TESTING WITHOUT UART
 
 if role == "standalone":
-    upstream.deinit()
-    downstream.deinit()
+    #upstream.deinit()
+    #downstream.deinit()
     try:
         while True:
             try:

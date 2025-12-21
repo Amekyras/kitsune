@@ -80,12 +80,12 @@ class runtime_config:
 
     Read at runtime and not expected to be changed once play begins.
     """
-    def __init__(self, debug=False, test_speaker=False, autoreset=False, role="standalone", volume=user_cfg.volume, freqmod=user_cfg.freqmod, buzzer=None):
+    def __init__(self, debug=False, test_speaker=False, autoreset=False, role="standalone", user_volume=user_cfg.volume, freqmod=user_cfg.freqmod, buzzer=None):
         self.debug = debug
         self.test_speaker = test_speaker
         self.autoreset = autoreset
         self.role = role
-        self.volume = round((volume * 65535) / 100)  # Convert percentage to duty cycle
+        self.volume = (user_volume * 625) # Convert percentage to duty cycle
         self.freqmod = freqmod  # Frequency modulation factor
         self.chain_pos = 0  # Position in chain for multi-unit setups
         self.buzzer = PWM(Pin(buzzer_pin), freq=2500, duty_u16=0)

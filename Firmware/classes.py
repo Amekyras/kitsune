@@ -1,7 +1,7 @@
 import micropython
 import utime
 from machine import *
-import hardware_cfg
+import Firmware.switchboard as switchboard
 import user_cfg
 import lib.mcp23017 as mcp23017
 #from functions import handle_buzz
@@ -40,7 +40,7 @@ class box():
         #    self.button = self.mcp[button_pin].input(pull=1)
         #    #self.button = mcp[button_pin]
 
-        if irq and not hardware_cfg.game.debug:
+        if irq and not switchboard.game.debug:
             self.button.irq(handler=self.handle_press,trigger=Pin.IRQ_RISING)
 
 
@@ -70,7 +70,7 @@ class box():
 
     def handle_press(self, c):
         state = disable_irq()
-        if not hardware_cfg.game.lock:
+        if not switchboard.game.lock:
             micropython.schedule(self.handler, self)
             print(f"buzz from {self.id}")
         else:
@@ -102,8 +102,8 @@ def handle_buzz(arg):
         arg (box): The box that triggered the buzz.
     """
     #hardware_cfg.game.lock = True
-    hardware_cfg.game.flag = True
-    hardware_cfg.game.active = arg
+    switchboard.game.flag = True
+    switchboard.game.active = arg
 
     #print(f"Successful buzz from {arg.id}")
 

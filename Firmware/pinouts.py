@@ -7,6 +7,10 @@ pixel_pin = 23
 #rx_pin = 1
 
 
+
+
+
+
 p8_pins = {
     "switch_pins": [28, 23, 22, 12, 11, 10], #v0.2 pins
     "button_pins": [2, 4, 6, 8, 16, 18, 20, 26], #v0.2 pins
@@ -50,15 +54,6 @@ p10v1_pins = { #pins for kitsune++ v1.0 board - assign switches (read-once) and 
 }
 
 
-pinout = p10v1_pins #switch pinouts for ++ board are p10_pins
+firmware_version = "3.1.0-alpha"
 
-switch_pins = pinout["switch_pins"]
-switch_ids = pinout["switch_ids"]
-
-button_pins = pinout["button_pins"]
-led_pins = pinout["led_pins"]
-ids = pinout["ids"]
-
-buzzer_pin = pinout["buzzer_pin"]
-control_led = pinout["control_led"]
-control_pin = pinout["control_pin"]
+board_pins = p10v1_pins #switch pinouts for ++ board are p10_pins

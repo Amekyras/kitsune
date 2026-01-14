@@ -1,6 +1,6 @@
 # end user configuration - buzzer volume, buzzer frequency, LED colours
 
-volume = 10  # Default volume percentage - interpreted as a percentage of max_volume_duty
+volume = 3  # Default volume percentage - interpreted as a percentage of max_volume_duty
 freqmod = 100  # Default frequency modulation factor
 
 team_a_colour = (0, 0, 255)  # Blue

@@ -1,6 +1,7 @@
 # end user configuration - buzzer volume, buzzer frequency, LED colours
 
-volume = 5  # Default volume percentage - interpreted as a percentage of max_volume_duty
+volume = 10  # Default volume percentage - interpreted as a percentage of max_volume_duty
+# 10 seems to be the sweet spot for 5v, 5 for 27v
 freqmod = 100  # Default frequency modulation factor
 
 team_a_colour = (0, 0, 255)  # Blue

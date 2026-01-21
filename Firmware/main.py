@@ -74,7 +74,6 @@ try:
 
 
     print("Unlock to start")
-    cfg.buzzer.duty_u16(0)
 
     #while True:
     #    try:
@@ -97,6 +96,6 @@ try:
             pass                                 
 
 except Exception as e:
-    cfg.buzzer.duty_u16(0)
+    #cfg.buzzer.duty_u16(0)
     sys.print_exception(e)
     #machine.reset()

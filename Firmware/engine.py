@@ -3,7 +3,7 @@
 
 
 import micropython
-from machine import Pin, Timer, disable_irq, enable_irq
+from machine import PWM, Pin, Timer, disable_irq, enable_irq
 import utime
 from lib.buzzer_music import music
 from pinouts import board_pins
@@ -111,12 +111,14 @@ class kitsune_engine():
         """
         if config is None:
             config = self.cfg
-        speaker = config.buzzer
+        speaker = PWM(config.buzzer_pin, freq=2500, duty_u16=0)
         #speaker.duty_u16(50000)
         volume = round(config.volume)
         freqmod = (config.freqmod/100) * self.team_offset
         print(f"Buzzing at volume {volume} and freqmod {freqmod}")
         if not config.mute:
+
+
             print("Start buzz")
             speaker.duty_u16(volume)
             speaker.freq(round(900*freqmod))
@@ -153,6 +155,7 @@ class kitsune_engine():
             utime.sleep_ms(125)
 
             speaker.duty_u16(0)
+            speaker.deinit()
             print("End buzz")
         return()
     
@@ -180,5 +183,6 @@ class kitsune_engine():
                     break
             print("End startup buzz")
             self.cfg.buzzer.duty_u16(0)
+        PWM(jingler).deinit()
 
         return()

@@ -1,3 +1,4 @@
+import machine
 import switchboard
 import utime
 from factory import init_hardware, init_ctrl
@@ -31,6 +32,8 @@ try:
 
     print ("Pinout:", board_pins["name"])
 
+
+    
     engine.buzz_startup()
 
 
@@ -71,6 +74,18 @@ try:
 
 
     print("Unlock to start")
+    cfg.buzzer.duty_u16(0)
+
+    #while True:
+    #    try:
+    #        engine.buzz()
+    #    except Exception as e:
+    #        cfg.buzzer.duty_u16(0)
+    #        sys.print_exception(e)
+    #        break
+
+    #cfg.buzzer.deinit()
+    #cfg.buzzer_pin.high()
     # 2. Main Loop
     while True:
         # If the MCP is used for buttons, we poll them here
@@ -81,4 +96,7 @@ try:
                 engine.reset()
             pass                                 
 
-except Exception as e: sys.print_exception(e)
+except Exception as e:
+    cfg.buzzer.duty_u16(0)
+    sys.print_exception(e)
+    #machine.reset()

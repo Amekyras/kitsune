@@ -58,6 +58,7 @@ class runtime_config:
         self.freqmod = freqmod  # Frequency modulation factor
         #self.chain_pos = 0  # Position in chain for multi-unit setups
         self.buzzer = PWM(Pin(buzzer_pin), freq=2500, duty_u16=0)
+        self.buzzer_pin = Pin(buzzer_pin, Pin.OUT)
         self.status_led = Pin(status_pin, Pin.OUT)
 
         self.team_a_colour = user_cfg.team_a_colour

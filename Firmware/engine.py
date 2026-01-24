@@ -182,7 +182,6 @@ class kitsune_engine():
                     jingle.stop()
                     break
             print("End startup buzz")
-            self.cfg.buzzer.duty_u16(0)
         PWM(jingler).deinit()
 
         return()

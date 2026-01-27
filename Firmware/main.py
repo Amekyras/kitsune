@@ -5,12 +5,10 @@ from factory import init_hardware, init_ctrl
 from engine import kitsune_engine, player_box
 from pinouts import board_pins, firmware_version
 import os
-from lib.line_clear import clear_line
 import micropython
-import sys
-import io
 
-micropython.alloc_emergency_exception_buf(100)
+
+micropython.alloc_emergency_exception_buf(256)
 
 e = None
 
@@ -78,12 +76,7 @@ try:
             #clear_line(2)
 
         except Exception as e:
-
-            buf = io.StringIO()
-            sys.print_exception(e, buf)
-            print(buf.getvalue())
-            #with open("exceptions.txt", "a") as f:
-    #    sys.print_exception(e, f)
+            print(str(e))
 
     print("Unlock to start")
 
@@ -102,6 +95,6 @@ try:
 
 except Exception as e:
     #cfg.buzzer.duty_u16(0)
-    print(repr(e))
+    print(str(e))
     #sys.print_exception(e)
     #machine.reset()

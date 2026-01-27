@@ -16,9 +16,12 @@ class player_box():
         self.button = button_obj
         self.engine = engine
         self.id = id
+        self._debounce_ms = 10
+        self.last_press_time = 0
 
         if irq: #and not hardware_cfg.game.debug:
             self.button.irq(handler=self._handle_press, trigger=self.button.IRQ_RISING)
+
 
 
         if led_obj is not None:
@@ -36,9 +39,17 @@ class player_box():
 
 
     def _handle_press(self, _):
-        state = disable_irq()
-        micropython.schedule(self.engine.handle_buzz, self)
-        enable_irq(state)
+
+        # get current time
+        current_time = utime.ticks_ms()
+
+        # check that time since last press is greater than debounce time, or that time has wrapped
+        self.period = utime.ticks_diff(current_time, self.last_press_time)
+        if self.period > self._debounce_ms or self.period < 0:
+            self.last_press_time = current_time
+            micropython.schedule(self.engine.handle_buzz, self)
+
+
 
 
 
@@ -56,7 +67,7 @@ class kitsune_engine():
         self.refractory = False
         self.ref_timer = Timer(-1)
         self.control_led = control_led
-        self.team_offset = 1
+        self.team_offset = 1 # frequency coefficient to vary buzz sound by team
 
     def handle_buzz(self, player):
         if self.locked or self.refractory: return
@@ -94,7 +105,7 @@ class kitsune_engine():
         print ("Resetting")
 
         # Use timer to clear refractory period
-        self.ref_timer.init(mode=Timer.ONE_SHOT, period=100, callback=self.reset_refractory)
+        self.ref_timer.init(mode=Timer.ONE_SHOT, period=20, callback=self.reset_refractory)
         
     def reset_refractory(self, _):
         self.refractory = False

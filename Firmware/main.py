@@ -12,9 +12,22 @@ micropython.alloc_emergency_exception_buf(256)
 
 e = None
 
+status_led = machine.Pin(switchboard.status_pin, machine.Pin.OUT)
+
+def status_toggle(_):
+    status_led.toggle()
+
+status_timer = machine.Timer(-1)
+status_timer.init(period=500, mode=machine.Timer.PERIODIC, callback=status_toggle)
+
+
+
 try:
 
     # 1. Setup
+
+    # status LED toggle - if it's flashing, we are alive
+    
 
     player_data, switches, mcp = init_hardware() # shim pins, read switches, init mcp
 

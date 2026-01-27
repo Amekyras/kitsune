@@ -1,6 +1,6 @@
 import Firmware.switchboard as switchboard
 import user_cfg
-from classes import * # type: ignore
+from Firmware.classes_old import * # type: ignore
 from neopixel import NeoPixel
 from lib.buzzer_music import music
 import rp2

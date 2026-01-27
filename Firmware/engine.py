@@ -90,8 +90,10 @@ class kitsune_engine():
 
         print(f"Buzzer locked by {player.id}")
         self.buzz(self.cfg)
+        if self.cfg.autoreset:
+            Timer(-1).init(mode=Timer.ONE_SHOT, period=self.cfg.reset_duration, callback=self.reset)
 
-    def reset(self):
+    def reset(self, *args):
 
         self.cfg.pixel.fill(self.cfg.armed_colour)
         self.cfg.pixel.write()

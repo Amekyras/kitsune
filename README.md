@@ -4,10 +4,23 @@ Kitsune is a lockout buzzer system designed by myself (Aisling Skeet). I started
 
 If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox.com or message amekyras on Discord. I sell them fully assembled in any filament colour I can get my hands on, with all necessary parts included save a USB-C cable (your phone charger probably works fine). I can add customisations (e.g. your society logo) for a small fee (or free if it's very simple). *I can also make the clear acrylic version pictured at the bottom of the page, but this was originally just a show piece and I don't have regular laser cutter access, so I'll need a longer lead time.*
 
+
+
+
+
 ## Versions
 
+- Kitsune++ v1.0/v1.1.0
+  - Compact buzzer system with buzz lights on individual buzzer boxes and central unit
+  - All ports through-hole PJ306 connectors for TRS 3.5mm audio cables - more resilient than previous PJ320 jacks
+  - Ten players and one moderator
+  - Breakouts for all connector jacks and USB ports
+  - Increased buzzer voltage 
+  - Redesigned tail PCBs and housings for resilience
+  - For hackers, breakouts and solder jumpers allow you to design your own buzzer boxes with e.g. different buttons, different LEDs, etc
+  - USB-C ports allowing daisychaining of buzzer boxes (under development, firmware can be updated when this functionality is released)
       
-- Kitsune v0.3 - **I strongly recommend this version or the Plus Plus, the new jacks are much more resilient to being bashed around**
+- Kitsune v0.3
   - One central box with speaker and USB-C connection, PJ306 metal audio jacks to connect buzzers
   - Nine 'tails' - smaller buzzer boxes connected via 3.5mm audio cables
   - One tail is used as the moderator's control box to initialise and reset the system
@@ -18,14 +31,7 @@ If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox
 - Kitsune++ v0.1
   - Ten-player version of Kitsune v0.3
  
-## Upcoming version
 
-- Kitsune++ v1.0
-  - USB-C ports allowing daisychaining of buzzer boxes (under development)
-  - Breakouts for all connector jacks and USB ports
-  - Increased buzzer voltage 
-  - Redesigned tail PCBs and housings for resilience
-  - For hackers, breakouts and solder jumpers allow you to design your own buzzer boxes with e.g. different buttons, different LEDs, etc
 
 
 ## Older versions, no longer available:
@@ -49,23 +55,21 @@ If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox
 
 ## Prices:
 
-Kitsune v0.3 - £150
+Kitsune++ v1.0 (comes with 12 buzzers and 12 cables)
+
+Kitsune v0.3 - £150 (comes with 9 buzzers and 9 cables)
 
 Kitsune++ v0.1 - £185 (comes with 12 buzzers and 12 cables)
 
-'Grab bag' - Kitsune v0.2 and 9 buzzers, random colours, no cables included - £100
-
 Free collection at certain UK tournaments or domestic shipping £5 (£7.50 for set of two)
 
-USA/other international pricing for a v0.2 set may vary, but is currently whatever the currency conversion amounts to plus however much I need to pay for shipping and packing, not including any import taxes you may need to pay if they apply.
+USA/other international pricing for a set may vary, but is currently whatever the currency conversion amounts to plus however much I need to pay for shipping and packing, not including any import taxes you may need to pay if they apply.
 
 ### Discounts
 
 Buying multiple sets - 10% discount for 2 or more sets
 
 No cables needed - minus £10 - Cables used are 3.5mm TRS audio cables, any stereo headphone aux cable should work. This may be particularly useful if located outside the UK, as cables constitute most of the shipping volume and so increase the price.
-
-Compact 'Kit' buzzers using clicky tactile switch rather than red springy switch - minus £10
 
 ### Refunds
 

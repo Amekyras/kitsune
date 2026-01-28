@@ -5,7 +5,9 @@ Kitsune is a lockout buzzer system designed by myself (Aisling Skeet). I started
 If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox.com or message amekyras on Discord. I sell them fully assembled in any filament colour I can get my hands on, with all necessary parts included save a USB-C cable (your phone charger probably works fine). I can add customisations (e.g. your society logo) for a small fee (or free if it's very simple). *I can also make the clear acrylic version pictured at the bottom of the page, but this was originally just a show piece and I don't have regular laser cutter access, so I'll need a longer lead time.*
 
 
+BASIC USAGE INSTRUCTIONS:
 
+After plugging in the buzzers, press the CONTROL box to start the main loop. This will illuminate the control box. After this, players may buzz in (which will extinguish the control box and illuminate their box, and buzz audibly). Press the control box to reset the buzzers.
 
 
 ## Versions

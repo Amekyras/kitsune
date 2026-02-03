@@ -12,15 +12,20 @@ After plugging in the buzzers, press the CONTROL box to start the main loop. Thi
 
 ## Versions
 
-- Kitsune++ v1.0/v1.1.0
+- Kitsune++ v1.0
   - Compact buzzer system with buzz lights on individual buzzer boxes and central unit
   - All ports through-hole PJ306 connectors for TRS 3.5mm audio cables - more resilient than previous PJ320 jacks
   - Ten players and one moderator
   - Breakouts for all connector jacks and USB ports
-  - Increased buzzer voltage 
+  - Increased buzzer voltage (5V) - this should be loud enough for almost all players
   - Redesigned tail PCBs and housings for resilience
   - For hackers, breakouts and solder jumpers allow you to design your own buzzer boxes with e.g. different buttons, different LEDs, etc
   - USB-C ports allowing daisychaining of buzzer boxes (under development, firmware can be updated when this functionality is released)
+ 
+- Kitsune++ v1.1.0
+  - All of the above, with a 27V buzzer and AO3400 MOSFET
+  - This is **_loud as fuck_** - you can decrease the volume in software if necessary
+  - Can be effectively downgraded to a v1.0 by cutting the 27V and boost converter jumpers (rear of board) and bridging the 5V jumper
       
 - Kitsune v0.3
   - One central box with speaker and USB-C connection, PJ306 metal audio jacks to connect buzzers
@@ -57,11 +62,13 @@ After plugging in the buzzers, press the CONTROL box to start the main loop. Thi
 
 ## Prices:
 
-Kitsune++ v1.0 (comes with 12 buzzers and 12 cables)
+Kitsune++ v1.1.0 - £185 (comes with 12 buzzers and 12 cables)
+
+Kitsune++ v1.0.0 - £180 (comes with 12 buzzers and 12 cables)
 
 Kitsune v0.3 - £150 (comes with 9 buzzers and 9 cables)
 
-Kitsune++ v0.1 - £185 (comes with 12 buzzers and 12 cables)
+Kitsune++ v0.1 - £175 (comes with 12 buzzers and 12 cables)
 
 Free collection at certain UK tournaments or domestic shipping £5 (£7.50 for set of two)
 

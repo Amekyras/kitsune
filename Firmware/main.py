@@ -78,7 +78,7 @@ try:
                     control_led.off()
 
                 for s in switches:
-                    if s.value() == 1:
+                    if s.value(pullup=True) == 1:
                         on_list.append(f"Switch {switches.index(s)+1}")
                     else:
                         off_list.append(f"Switch {switches.index(s)+1}")

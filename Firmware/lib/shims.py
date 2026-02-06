@@ -10,8 +10,13 @@ class UnifiedPin:
             if self.is_virtual: self.obj.output(val=val)
             else: self.obj.value(val)
         else:
-            # Reading
-            return self.obj.value() if not self.is_virtual else self.obj.input(pullup=pullup)
+            # handle polarity
+            if not self.is_virtual and pullup:
+                return not self.obj.value() # invert for pullup
+            elif not self.is_virtual and not pullup:
+                return self.obj.value() 
+            else: # virtual pins handle pullup internally
+                return self.obj.input(pullup=pullup)
 
     def on(self): 
         self.value(val=1)

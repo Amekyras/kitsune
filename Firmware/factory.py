@@ -60,7 +60,7 @@ def init_hardware():
             s = UnifiedPin(mcp[switch_pins[i]]) # type: ignore # Virtual Switch
             switches.append(s)
         else:
-            s = Pin(switch_pins[i], Pin.IN, Pin.PULL_UP)
+            s = UnifiedPin(Pin(switch_pins[i], Pin.IN, Pin.PULL_UP))
             switches.append(s)
         
     return boxes, switches, mcp

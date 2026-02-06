@@ -56,4 +56,4 @@ p10v1_pins = { #pins for kitsune++ v1.0 board - assign switches (read-once) and 
 
 firmware_version = "3.1.0-alpha"
 
-board_pins = p10v1_pins #switch pinouts for ++ board are p10_pins
+board_pins = p10_pins #switch pinouts for ++ board are p10_pins

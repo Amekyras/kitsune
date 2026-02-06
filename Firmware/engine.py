@@ -68,6 +68,7 @@ class kitsune_engine():
         self.ref_timer = Timer(-1)
         self.control_led = control_led
         self.team_offset = 1 # frequency coefficient to vary buzz sound by team
+        print("Init engine")
 
     def handle_buzz(self, player):
         if self.locked or self.refractory: return

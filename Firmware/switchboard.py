@@ -47,7 +47,7 @@ class runtime_config:
     """
     def __init__(self, switches, debug=False, test_speaker=False, autoreset=False, role="standalone", user_volume=user_cfg.volume, freqmod=user_cfg.freqmod, buzzer=None):
 
-
+        print("Init switchboard")
         self.debug = switches[0].value(pullup=1)
         self.mute = switches[1].value(pullup=1)
         self.test_speaker = switches[2].value(pullup=1)

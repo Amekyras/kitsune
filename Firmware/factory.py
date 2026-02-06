@@ -21,18 +21,21 @@ control_pin = pinout["control_pin"]
 has_mcp = pinout["mcp"]
 
 def init_mcp():
-
+    print("Init MCP")
     if not has_mcp:
-        return None
-    # Setup I2C and MCP
-    i2c = I2C(0, scl=Pin(21), sda=Pin(20))
-    mcp = MCP23017(i2c, 0x20)
-    return mcp
+        mcp = None
+        return mcp
+    else:
+        # Setup I2C and MCP
+        i2c = I2C(0, scl=Pin(21), sda=Pin(20))
+        mcp = MCP23017(i2c, 0x20)
+        return mcp
 
 def init_hardware():
 
 
     # Wrap Pins in Shims so they all work the same
+    print("Init hardware")
     boxes = []
     if has_mcp:
         mcp = init_mcp()
@@ -62,9 +65,10 @@ def init_hardware():
         
     return boxes, switches, mcp
 
-def init_ctrl(mcp=None):
+def init_ctrl(mcp):
+    print("Init control")
     ctrl_button = Pin(control_pin, Pin.IN, Pin.PULL_DOWN)
-    if has_mcp:
+    if mcp:
         mcp.pin(control_led, mode=0) # type: ignore
         ctrl_led = UnifiedPin(mcp[control_led]) # type: ignore # MCP LED
     else:

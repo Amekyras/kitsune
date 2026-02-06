@@ -104,7 +104,9 @@ If the buzzer itself (cylinder on the main box) comes loose in its press-fit slo
 
 ### Firmware updates
 
-If, for some reason, you need to reinstall the Kitsune program on the board, this can be done using an IDE such as Thonny or VSCode with the MicroPico extension installed. If you have somehow managed to remove MicroPython from the Pico, it can be reflashed by powering it on or resetting whilst the BOOT button is depressed, and then copying the MicroPython UF2 file to the USB device that will appear on your computer. Of course, if you want to change how Kitsune works, go wild - it's all written in Python, somewhat messy but should be broadly intelligible.
+See the wiki page here: https://github.com/Amekyras/kitsune/wiki/Firmware-installation
+
+Of course, if you want to change how Kitsune works, go wild - it's all written in Python, somewhat messy but should be broadly intelligible.
 
 ## Credits and disclaimers
 I've made this project open-source under a modified Commons Clause. This means that you can make your own Kitsune set, but not sell it. I'm not a lawyer, so in case I've done anything wrong, in plain English - _please don't sell Kitsunes_.

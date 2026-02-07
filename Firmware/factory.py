@@ -56,7 +56,7 @@ def init_hardware():
     switches = []
     for i in range (len(switch_pins)):
         if has_mcp:
-            mcp.pin(switch_pins[i], mode=1, pullup=True, polarity=1) # type: ignore
+            mcp.pin(switch_pins[i], mode=1, pullup=True, polarity=0) # type: ignore
             s = UnifiedPin(mcp[switch_pins[i]]) # type: ignore # Virtual Switch
             switches.append(s)
         else:

@@ -16,7 +16,8 @@ class UnifiedPin:
             elif not self.is_virtual and not pullup:
                 return self.obj.value() 
             else: # virtual pins handle pullup internally
-                return self.obj.input(pullup=pullup)
+                #return self.obj.input(pullup=pullup)
+                return self.obj.input()
 
     def on(self): 
         self.value(val=1)

@@ -4,10 +4,33 @@ Kitsune is a lockout buzzer system designed by myself (Aisling Skeet). I started
 
 If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox.com or message amekyras on Discord. I sell them fully assembled in any filament colour I can get my hands on, with all necessary parts included save a USB-C cable (your phone charger probably works fine). I can add customisations (e.g. your society logo) for a small fee (or free if it's very simple). *I can also make the clear acrylic version pictured at the bottom of the page, but this was originally just a show piece and I don't have regular laser cutter access, so I'll need a longer lead time.*
 
+
+BASIC USAGE INSTRUCTIONS:
+
+After plugging in the buzzers, press the CONTROL box to start the main loop. This will illuminate the control box. After this, players may buzz in (which will extinguish the control box and illuminate their box, and buzz audibly). Press the control box to reset the buzzers.
+
+
 ## Versions
 
-      
-- Kitsune v0.3 - **I strongly recommend this version or the Plus Plus, the new jacks are much more resilient to being bashed around**
+- Kitsune++ v1.0
+  - Compact buzzer system with buzz lights on individual buzzer boxes and central unit
+  - All ports through-hole PJ306 connectors for TRS 3.5mm audio cables - more resilient than previous PJ320 jacks
+  - Ten players and one moderator
+  - Breakouts for all connector jacks and USB ports
+  - Increased buzzer voltage (5V) - this should be loud enough for almost all players
+  - Redesigned tail PCBs and housings for resilience
+  - For hackers, breakouts and solder jumpers allow you to design your own buzzer boxes with e.g. different buttons, different LEDs, etc
+  - USB-C ports allowing daisychaining of buzzer boxes (under development, firmware can be updated when this functionality is released)
+ 
+- Kitsune++ v1.1.0
+  - All of the above, with a 27V buzzer and AO3400 MOSFET
+  - This is **_loud as fuck_** - you can decrease the volume in software if necessary
+  - Can be effectively downgraded to a v1.0 by cutting the 27V and boost converter jumpers (rear of board) and bridging the 5V jumper
+
+
+### Beta versions (discontinued)
+
+- Kitsune v0.3
   - One central box with speaker and USB-C connection, PJ306 metal audio jacks to connect buzzers
   - Nine 'tails' - smaller buzzer boxes connected via 3.5mm audio cables
   - One tail is used as the moderator's control box to initialise and reset the system
@@ -18,54 +41,28 @@ If you're interested in buying a Kitsune set, please email me at ash.skeet@pobox
 - Kitsune++ v0.1
   - Ten-player version of Kitsune v0.3
  
-## Upcoming version
-
-- Kitsune++ v1.0
-  - USB-C ports allowing daisychaining of buzzer boxes (under development)
-  - Breakouts for all connector jacks and USB ports
-  - Increased buzzer voltage 
-  - Redesigned tail PCBs and housings for resilience
-  - For hackers, breakouts and solder jumpers allow you to design your own buzzer boxes with e.g. different buttons, different LEDs, etc
 
 
-## Older versions, no longer available:
-- Kitsune v0.1 - no longer available
-  - One central box with speaker and USB connection
-  - Nine 'tails' - smaller buzzer boxes connected via 3.5mm audio cables
-  - One tail is used as the moderator's control box to initialise and reset the system
-  - Complete lockout controlled by Raspberry Pi Pico
-  - Debug jumper to test all ports and boxes
-   
-- Kitsune v0.2 - no longer available
-  - All of the above, plus:
-  - Additional onboard LEDS to provide a secondary indication mechanism
-  - New JST-XH port to allow external battery usage (tested with 1x9V, should work with multiple AAs in series)
-  - New JST-XH port breaking out UART pins
-  - Debug jumper replaced with 6-way DIP switch, controlling (left to right)
-    - Debug mode
-    - Speaker mute
-    - Speaker test
-    - Automatic reset
 
 ## Prices:
 
-Kitsune v0.3 - £150
+Kitsune++ v1.1.0 - £175 (comes with 12 buzzers and 12 cables)
 
-Kitsune++ v0.1 - £185 (comes with 12 buzzers and 12 cables)
+Kitsune++ v1.0.0 - £170 (comes with 12 buzzers and 12 cables)
 
-'Grab bag' - Kitsune v0.2 and 9 buzzers, random colours, no cables included - £100
+Kitsune v0.3 - £150 (comes with 9 buzzers and 9 cables) (discontinued)
+
+Kitsune++ v0.1 - £175 (comes with 12 buzzers and 12 cables) (discontinued)
 
 Free collection at certain UK tournaments or domestic shipping £5 (£7.50 for set of two)
 
-USA/other international pricing for a v0.2 set may vary, but is currently whatever the currency conversion amounts to plus however much I need to pay for shipping and packing, not including any import taxes you may need to pay if they apply.
+USA/other international pricing for a set may vary, but is currently whatever the currency conversion amounts to plus however much I need to pay for shipping and packing, not including any import taxes you may need to pay if they apply.
 
 ### Discounts
 
 Buying multiple sets - 10% discount for 2 or more sets
 
 No cables needed - minus £10 - Cables used are 3.5mm TRS audio cables, any stereo headphone aux cable should work. This may be particularly useful if located outside the UK, as cables constitute most of the shipping volume and so increase the price.
-
-Compact 'Kit' buzzers using clicky tactile switch rather than red springy switch - minus £10
 
 ### Refunds
 
@@ -91,7 +88,9 @@ If the buzzer itself (cylinder on the main box) comes loose in its press-fit slo
 
 ### Firmware updates
 
-If, for some reason, you need to reinstall the Kitsune program on the board, this can be done using an IDE such as Thonny or VSCode with the MicroPico extension installed. If you have somehow managed to remove MicroPython from the Pico, it can be reflashed by powering it on or resetting whilst the BOOT button is depressed, and then copying the MicroPython UF2 file to the USB device that will appear on your computer. Of course, if you want to change how Kitsune works, go wild - it's all written in Python, somewhat messy but should be broadly intelligible.
+See the wiki page here: https://github.com/Amekyras/kitsune/wiki/Firmware-installation
+
+Of course, if you want to change how Kitsune works, go wild - it's all written in Python, somewhat messy but should be broadly intelligible.
 
 ## Credits and disclaimers
 I've made this project open-source under a modified Commons Clause. This means that you can make your own Kitsune set, but not sell it. I'm not a lawyer, so in case I've done anything wrong, in plain English - _please don't sell Kitsunes_.
@@ -105,6 +104,13 @@ Absolutely enormous thanks to the Sanjay Mortimer Foundation for supporting me i
 TODO: implement USB device identity, to work with buzzin.live etc
 
 ## Photos
+### Kitsune++ V1.0/V1.1
+
+![PXL_20260223_122147049](https://github.com/user-attachments/assets/cc30e9a9-ee57-4698-b1a2-6df9ffc8bd78)
+![PXL_20260223_122412445](https://github.com/user-attachments/assets/9f603419-a135-41c9-a112-88642774fa0d)
+![PXL_20260223_122135966](https://github.com/user-attachments/assets/05234aa3-94bf-436e-81b2-419a985544ca)
+![v1 vs v1point1](https://github.com/user-attachments/assets/0654f676-305e-4bca-a9a9-0293ce4c27c4)
+
 ### Kitsune
 ![PXL_20241107_222718396](https://github.com/user-attachments/assets/b72bb5ca-9fba-4505-bb74-53a440e6cba6)
 ![PXL_20241111_130336351 MP](https://github.com/user-attachments/assets/2092b343-8ded-4a94-a322-e174ae3cba6e)

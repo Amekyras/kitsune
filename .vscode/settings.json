@@ -9,10 +9,9 @@
     "micropico.syncAllFileTypes": true,
     "micropico.openOnStart": true,
     "python.analysis.typeshedPaths": [
-        "typings"
+        "~/.micropico-stubs/included"
     ],
     "python.analysis.extraPaths": [
         "~/.micropico-stubs/included",
-        "typings"
     ]
 }

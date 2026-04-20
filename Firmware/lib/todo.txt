@@ -1,0 +1,4 @@
+at startup, ping upstream and downstream every 100ms until control box init
+if upstream is present, pass on data and act on it with permission from upstream
+if downstream is present and not upstream, you are master, listen for input from downstream during main loop
+if if both downstream and upstream present, pass on data from downstream to upstream, and pass on permission to act from upstream

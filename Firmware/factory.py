@@ -1,4 +1,4 @@
-from machine import Pin, I2C
+from machine import Pin, I2C, UART
 from lib.mcp23017 import MCP23017
 #import hardware_cfg as hw_cfg
 from lib.shims import UnifiedPin
@@ -19,6 +19,8 @@ buzzer_pin = pinout["buzzer_pin"]
 control_led = pinout["control_led"]
 control_pin = pinout["control_pin"]
 has_mcp = pinout["mcp"]
+
+has_daisy = pinout["daisychain"]
 
 def init_mcp():
     print("Init MCP")
@@ -74,3 +76,14 @@ def init_ctrl(mcp):
     else:
         ctrl_led = Pin(control_led, Pin.OUT)
     return ctrl_button, ctrl_led
+
+
+
+def init_daisy():
+    print("Init daisychain")
+    if not has_daisy:
+        return None, None
+    # Initialize daisy chain here
+    upstream_uart = None
+    downstream_uart = None
+    return upstream_uart, downstream_uart

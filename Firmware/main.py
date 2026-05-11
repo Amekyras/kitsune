@@ -1,7 +1,7 @@
 import machine
 import switchboard
 import utime
-from factory import init_hardware, init_ctrl
+from factory import init_hardware, init_ctrl, init_daisy
 from engine import kitsune_engine, player_box
 from pinouts import board_pins, firmware_version
 import os
@@ -34,6 +34,8 @@ try:
 
     control_button, control_led = init_ctrl(mcp)
 
+    upstream_uart, downstream_uart = init_daisy()
+
 
     cfg = switchboard.runtime_config(switches) # setup runtime config with user_cfg data and switch states
     engine = kitsune_engine(cfg, control_led) # init engine with runtime config
@@ -43,68 +45,78 @@ try:
 
 
     print(os.uname()) # type: ignore #linter is wrong
-
     print("Kitsune Version:", firmware_version)
-
     print ("Pinout:", board_pins["name"])
-
-
 
     engine.buzz_startup()
 
+except Exception as e:
+    print ("Exception during setup phase")
+    print(str(e))
 
-    # do debug
-    if cfg.debug:
-        print("DEBUG MODE ENABLED")
 
-        
-        try:
-            for i in players:
-                i.button.irq(handler=None)
-            tick = 0
-            while True:
-                on_list = []
-                off_list = []
-                for p in players:
-                    if p.button.value() == 1:
-                        on_list.append(p.id)
-                        p.update_led(1)
-                    else:
-                        off_list.append(p.id)
-                        p.update_led(0)
-                if control_button.value() == 1:
-                    on_list.append("CTRL")
-                    control_led.on()
+# do debug
+if cfg.debug:
+    print("DEBUG MODE ENABLED")
+
+    
+    try:
+        for i in players:
+            i.button.irq(handler=None)
+        tick = 0
+        while True:
+            on_list = []
+            off_list = []
+            for p in players:
+                if p.button.value() == 1:
+                    on_list.append(p.id)
+                    p.update_led(1)
                 else:
-                    off_list.append("CTRL")
-                    control_led.off()
+                    off_list.append(p.id)
+                    p.update_led(0)
+            if control_button.value() == 1:
+                on_list.append("CTRL")
+                control_led.on()
+            else:
+                off_list.append("CTRL")
+                control_led.off()
 
-                for s in switches:
-                    if s.value(pullup=True) == 1:
-                        on_list.append(f"Switch {switches.index(s)+1}")
-                    else:
-                        off_list.append(f"Switch {switches.index(s)+1}")
-                memfree = "{:^10}".format(gc.mem_free())
-                tickform = '{:^10}'.format(str(tick))
-                print(f"ON: {on_list}, OFF: {off_list}, TICK: {tickform}, MEM: {memfree}", end="\r")
-                tick += 1
-                #sys.stdout.flush()
-                #print(f"OFF: {off_list}")
-                #utime.sleep(0.1)
-            #clear_line(2)
+            for s in switches:
+                if s.value(pullup=True) == 1:
+                    on_list.append(f"Switch {switches.index(s)+1}")
+                else:
+                    off_list.append(f"Switch {switches.index(s)+1}")
+            memfree = "{:^10}".format(gc.mem_free())
+            tickform = '{:^10}'.format(str(tick))
+            print(f"ON: {on_list}, OFF: {off_list}, TICK: {tickform}, MEM: {memfree}", end="\r")
+            tick += 1
+            #sys.stdout.flush()
+            #print(f"OFF: {off_list}")
+            #utime.sleep(0.1)
+        #clear_line(2)
 
-        except Exception as e:
-            print(str(e))
+    except Exception as e:
+        print("Exception during debug loop")
+        print(str(e))
 
-    print("Unlock to start")
+
+print("Unlock to start")
 
 
-#cfg.buzzer.deinit()
-#cfg.buzzer_pin.high()
+
+while True:
+    if control_button.value() == 1:
+        print("Starting up")
+        engine.reset()
+        break
+    else:
+        # do check for upstream and downstream
+        pass
+
+try:
+
 # 2. Main Loop
     while True:
-        # If the MCP is used for buttons, we poll them here
-        # If using IRQs on native pins, this loop stays nearly empty!
         if engine.locked:
             # Check for Reset button press
             if control_button.value() == 1:
@@ -114,6 +126,7 @@ try:
 
 except Exception as e:
     #cfg.buzzer.duty_u16(0)
+    print("Exception during main loop")
     print(str(e))
     #sys.print_exception(e)
     #machine.reset()

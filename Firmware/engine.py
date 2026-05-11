@@ -68,10 +68,17 @@ class kitsune_engine():
         self.ref_timer = Timer(-1)
         self.control_led = control_led
         self.team_offset = 1 # frequency coefficient to vary buzz sound by team
+
+        ### MULTIBOX STUFF ###
+        self.daisychain = self.cfg.daisychain
+        self.chain_upstream = 0 # am I listening to anyone from upstream
+        self.chain_downstream = 0 # am I listening to anyone from downstream
         print("Init engine")
 
     def handle_buzz(self, player):
         if self.locked or self.refractory: return
+
+        
         
         self.locked = True
         self.control_led.off()

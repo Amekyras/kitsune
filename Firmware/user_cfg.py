@@ -1,7 +1,10 @@
 # end user configuration - buzzer volume, buzzer frequency, LED colours
 
-volume = 30  # Default volume percentage - interpreted as a percentage of max_volume_duty
-# 30 is sweet spot?
+volume = 5  # Default volume percentage - interpreted as a percentage of max_volume_duty
+# 30 is sweet spot for 5v?
+# 5 sweet spot for 27v at normal volume
+
+
 freqmod = 100  # Default frequency modulation factor
 
 team_a_colour = (0, 0, 255)  # Blue

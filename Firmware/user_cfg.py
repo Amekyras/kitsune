@@ -1,8 +1,9 @@
 # end user configuration - buzzer volume, buzzer frequency, LED colours
 
-volume = 5  # Default volume percentage - interpreted as a percentage of max_volume_duty
+override_vol_default = False  # Set to True to override the default volume for the board (as defined in pinouts.py) with the value below.
+volume = 10  # Default volume percentage - interpreted as a percentage of max_volume_duty
 # 30 is sweet spot for 5v?
-# 5 sweet spot for 27v at normal volume
+# 7 is sweet spot for 27v at normal volume
 
 
 freqmod = 100  # Default frequency modulation factor

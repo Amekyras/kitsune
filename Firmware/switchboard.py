@@ -45,7 +45,8 @@ class runtime_config:
 
     Read at runtime and not expected to be changed once play begins.
     """
-    def __init__(self, switches, debug=False, test_speaker=False, autoreset=False, role="standalone", user_volume=user_cfg.volume, freqmod=user_cfg.freqmod, buzzer=None):
+    def __init__(self, switches, debug=False, test_speaker=False, autoreset=False, role="standalone", 
+                 user_volume=user_cfg.volume if user_cfg.override_vol_default else pinout["default_volume"], freqmod=user_cfg.freqmod, buzzer=None):
 
         print("Init switchboard")
         self.debug = switches[0].value(pullup=1)

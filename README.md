@@ -50,9 +50,9 @@ Kitsune++ v1.1.0 - £175 (comes with 12 buzzers and 12 cables)
 
 Kitsune++ v1.0.0 - £170 (comes with 12 buzzers and 12 cables)
 
-Kitsune v0.3 - £150 (comes with 9 buzzers and 9 cables) (discontinued)
+~~Kitsune v0.3 - £150 (comes with 9 buzzers and 9 cables) (discontinued)~~
 
-Kitsune++ v0.1 - £175 (comes with 12 buzzers and 12 cables) (discontinued)
+~~Kitsune++ v0.1 - £175 (comes with 12 buzzers and 12 cables) (discontinued)~~
 
 Free collection at certain UK tournaments or domestic shipping £5 (£7.50 for set of two)
 

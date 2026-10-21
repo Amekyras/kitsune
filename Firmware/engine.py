@@ -169,6 +169,10 @@ class kitsune_engine():
             utime.sleep_ms(125)
 
             speaker.duty_u16(0)
+            utime.sleep_ms(10) # small delay to hopefully prevent a weird low buzz
+            speaker.freq(0)
+            utime.sleep_ms(10) # small delay to hopefully prevent a weird low buzz
+
             speaker.deinit()
             print("End buzz")
         return()

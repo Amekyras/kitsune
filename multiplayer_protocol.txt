@@ -1,0 +1,20 @@
+Send downstream:
+[BEG]C0-L0-PA0-S1[END]
+
+[BEG] - begin packet
+
+C0 - chain number/address (0-9) - if match own number, follow box light instructions and forward packet, else just forward packet
+
+L0 - lock status (0-1) - 0 is unlocked, if 1 set lock to True
+
+PA1 - player box (A/B/C + 1-5) - OPTIONAL
+
+S1 - light state (0-1) - set player box LED on or off - OPTIONAL
+
+[END] - end packet
+
+Send upstream:
+
+[BEG]ZA1[END]
+
+ZA1 - Buzz from A1
